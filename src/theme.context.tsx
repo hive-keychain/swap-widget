@@ -1,14 +1,14 @@
-import { createContext, useContext } from 'react';
-import Logger from 'src/utils/logger.utils';
+import { createContext, useContext } from "react";
+import Logger from "./utils/logger.utils";
 
 export enum Theme {
-  DARK = 'dark',
-  LIGHT = 'light',
+  DARK = "dark",
+  LIGHT = "light",
 }
 
 export enum ThemeOpacity {
-  dark = '33',
-  light = '2b',
+  dark = "33",
+  light = "2b",
 }
 
 export type ThemeContextType = {
@@ -20,10 +20,10 @@ export type ThemeContextType = {
 export const ThemeContext = createContext<ThemeContextType>({
   theme: Theme.DARK,
   setTheme: (theme) => {
-    Logger.log('no theme provider');
+    Logger.log("no theme provider");
   },
   toggleTheme: () => {
-    Logger.log('no theme provider');
+    Logger.log("no theme provider");
   },
 });
 export const useThemeContext = () => useContext(ThemeContext);

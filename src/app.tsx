@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import RotatingLogoComponent from "./common-ui/rotating-logo/rotating-logo.component";
+import { useThemeContext } from "./theme.context";
 import CurrencyPricesUtils from "./utils/hive/currency-prices.utils";
 import TokensUtils from "./utils/hive/tokens.utils";
 import Logger from "./utils/logger.utils";
-
+//TODO important:
+//  - fix the imports so we can use paths instead of ../../
 export const App = () => {
+  const { theme } = useThemeContext();
   //TODO now:
   //  step1: make work the rotating logo component when loading.
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     init();
+    console.log({ theme }); //TODO remove line
   }, []);
 
   const init = async () => {
@@ -32,13 +36,15 @@ export const App = () => {
     }
   };
 
-  if (loading)
-    return (
-      <div className="rotating-logo-wrapper">
-        <RotatingLogoComponent />
-      </div>
-    );
-  return null;
+  return (
+    <div className="App">
+      {loading && (
+        <div className="rotating-logo-wrapper">
+          <RotatingLogoComponent />
+        </div>
+      )}
+    </div>
+  );
   //TODO bellow uncomment and code
   // else if (!startTokenListOptions.length) {
   //   return (

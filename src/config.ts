@@ -1,4 +1,6 @@
 import { HiveEngineConfig } from "./interfaces/hive-engine-rpc.interface";
+//TODO important here:
+//  - fix the read of .env.
 const Config = {
   hiveEngine: {
     mainnet: "ssc-mainnet-hive",

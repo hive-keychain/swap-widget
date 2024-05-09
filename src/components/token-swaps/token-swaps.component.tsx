@@ -1,6 +1,6 @@
 import { KeychainKeyTypesLC } from "@interfaces/keychain.interface";
 import { SwapConfig } from "@interfaces/swap-token.interface";
-import { TokenMarket } from "@interfaces/tokens.interface";
+import { Token, TokenMarket } from "@interfaces/tokens.interface";
 // import { loadTokensMarket } from "@popup/hive/actions/token.actions";
 import { BaseCurrencies } from "@utils/hive/currency.utils";
 import TokensUtils from "@utils/hive/tokens.utils";
@@ -28,22 +28,23 @@ import FormatUtils from "@utils/format.utils";
 import Logger from "@utils/logger.utils";
 import { SwapTokenUtils } from "@utils/swap-token.utils";
 import { IStep } from "hive-keychain-commons";
-import { ThrottleSettings, throttle } from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
-import "react-tabs/style/react-tabs.scss";
-import { OperationButtonComponent } from "src/common-ui/button/operation-button.component";
+import React, { useEffect, useState } from "react";
+// import "react-tabs/style/react-tabs.scss";
+import { OperationButtonComponent } from "@common-ui/button/operation-button.component";
 import {
   ComplexeCustomSelect,
   OptionItem,
-} from "src/common-ui/custom-select/custom-select.component";
-import { CustomTooltip } from "src/common-ui/custom-tooltip/custom-tooltip.component";
-import { FormContainer } from "src/common-ui/form-container/form-container.component";
-import { SVGIcons } from "src/common-ui/icons.enum";
-import { InputType } from "src/common-ui/input/input-type.enum";
-import InputComponent from "src/common-ui/input/input.component";
-import RotatingLogoComponent from "src/common-ui/rotating-logo/rotating-logo.component";
-import ServiceUnavailablePage from "src/common-ui/service-unavailable-page/service-unavailable-page.component";
-import { SVGIcon } from "src/common-ui/svg-icon/svg-icon.component";
+} from "@common-ui/custom-select/custom-select.component";
+import { CustomTooltip } from "@common-ui/custom-tooltip/custom-tooltip.component";
+import { FormContainer } from "@common-ui/form-container/form-container.component";
+import { SVGIcons } from "@common-ui/icons.enum";
+import { InputType } from "@common-ui/input/input-type.enum";
+import InputComponent from "@common-ui/input/input.component";
+import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
+import ServiceUnavailablePage from "@common-ui/service-unavailable-page/service-unavailable-page.component";
+import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
+import { useTranslation } from "react-i18next";
+import { GenericObjectStringKeyPair } from "src/app";
 
 //TODO important:
 //  -> an input for username.
@@ -54,9 +55,15 @@ interface Props {
   price: CurrencyPrices;
   tokenMarket: TokenMarket[];
   activeAccount: ActiveAccount;
+  formParams: GenericObjectStringKeyPair;
 }
 
-const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
+const TokenSwaps = ({
+  price,
+  tokenMarket,
+  activeAccount,
+  formParams,
+}: Props) => {
   const [layerTwoDelayed, setLayerTwoDelayed] = useState(false);
   const [swapConfig, setSwapConfig] = useState({} as SwapConfig);
   const [underMaintenance, setUnderMaintenance] = useState(false);
@@ -85,39 +92,48 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
 
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
 
-  const throttledRefresh = useMemo(() => {
-    return throttle(
-      (newAmount, newEndToken, newStartToken, swapConfig) => {
-        if (parseFloat(newAmount) > 0 && newEndToken && newStartToken) {
-          calculateEstimate(newAmount, newStartToken, newEndToken, swapConfig);
-          setAutoRefreshCountdown(Config.swaps.autoRefreshPeriodSec);
-        }
-      },
-      1000,
-      { leading: false } as ThrottleSettings
-    );
-  }, []);
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    throttledRefresh(amount, endToken, startToken, swapConfig);
-  }, [amount, endToken, startToken, swapConfig]);
-
+  //TODO remove hook bellow
   useEffect(() => {
     init();
-    // setTitleContainerProperties({
-    //   title: "popup_html_token_swaps",
-    //   isBackButtonEnabled: true,
-    // });
-    return () => {
-      throttledRefresh.cancel();
-    };
+    console.log({ activeAccount, price, tokenMarket });
   }, []);
+
+  // //TODO uncomment & adjust block
+  // //start block
+  // const throttledRefresh = useMemo(() => {
+  //   return throttle(
+  //     (newAmount, newEndToken, newStartToken, swapConfig) => {
+  //       if (parseFloat(newAmount) > 0 && newEndToken && newStartToken) {
+  //         calculateEstimate(newAmount, newStartToken, newEndToken, swapConfig);
+  //         setAutoRefreshCountdown(Config.swaps.autoRefreshPeriodSec);
+  //       }
+  //     },
+  //     1000,
+  //     { leading: false } as ThrottleSettings
+  //   );
+  // }, []);
+  // useEffect(() => {
+  //   throttledRefresh(amount, endToken, startToken, swapConfig);
+  // }, [amount, endToken, startToken, swapConfig]);
+  // useEffect(() => {
+  //   init();
+  //   // setTitleContainerProperties({
+  //   //   title: "popup_html_token_swaps",
+  //   //   isBackButtonEnabled: true,
+  //   // });
+  //   return () => {
+  //     throttledRefresh.cancel();
+  //   };
+  // }, []);
+  // //end block
 
   const init = async () => {
     let tokenInitialization;
     try {
       // if (!tokenMarket.length) loadTokensMarket();
-      // setLoading(true);
+      setLoading(true);
       tokenInitialization = initTokenSelectOptions();
       const [serverStatus, config] = await Promise.all([
         SwapTokenUtils.getServerStatus(),
@@ -143,10 +159,8 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
       // setErrorMessage(err.reason?.template, err.reason?.params);
     } finally {
       await tokenInitialization;
-
-      //TODO check if this params may come from url reading params from the main(app.tsx)
-      // if (formParams.startToken) {
-      //   setStartToken(formParams.startToken);
+      // if (formParams.hasOwnProperty("from")) {
+      //   setStartToken(formParams.from);
       // }
       // if (formParams.endToken) {
       //   setEndToken(formParams.endToken);
@@ -183,70 +197,63 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
   }, [autoRefreshCountdown]);
 
   const initTokenSelectOptions = async () => {
-    //TODo bellow
-    // const [startList, allTokens] = await Promise.all([
-    //   SwapTokenUtils.getSwapTokenStartList(activeAccount.account),
-    //   TokensUtils.getAllTokens(),
-    // ]);
-    // let list = startList.map((token) => {
-    //   const tokenInfo = allTokens.find((t) => t.symbol === token.symbol);
-    //   let img = "";
-    //   let imgBackup = "";
-    //   if (tokenInfo) {
-    //     img =
-    //       tokenInfo.metadata.icon && tokenInfo.metadata.icon.length > 0
-    //         ? tokenInfo.metadata.icon
-    //         : "/assets/images/wallet/hive-engine.svg";
-    //     imgBackup = "/assets/images/wallet/hive-engine.svg";
-    //   } else {
-    //     img =
-    //       token.symbol === BaseCurrencies.HIVE.toUpperCase()
-    //         ? `/assets/images/wallet/hive-logo.svg`
-    //         : `/assets/images/wallet/hbd-logo.svg`;
-    //   }
-    //   return {
-    //     value: token,
-    //     label: token.symbol,
-    //     img: img,
-    //     imgBackup,
-    //   };
-    // });
-    // let endList: OptionItem[] = [
-    //   {
-    //     value: { symbol: BaseCurrencies.HIVE.toUpperCase(), precision: 3 },
-    //     label: BaseCurrencies.HIVE.toUpperCase(),
-    //     img: `/assets/images/wallet/hive-logo.svg`,
-    //   },
-    //   {
-    //     value: { symbol: BaseCurrencies.HBD.toUpperCase(), precision: 3 },
-    //     label: BaseCurrencies.HBD.toUpperCase(),
-    //     img: `/assets/images/wallet/hbd-logo.svg`,
-    //   },
-    //   ...allTokens
-    //     .filter((token: Token) => token.precision !== 0) // Remove token that doesn't allow decimals
-    //     .map((token: Token) => {
-    //       let img = "";
-    //       img = token.metadata.icon ?? "/assets/images/wallet/hive-engine.svg";
-    //       return {
-    //         value: token,
-    //         label: token.symbol,
-    //         img: img,
-    //         imgBackup: "/assets/images/wallet/hive-engine.svg",
-    //       };
-    //     }),
-    // ];
+    const [startList, allTokens] = await Promise.all([
+      SwapTokenUtils.getSwapTokenStartList(activeAccount.account),
+      TokensUtils.getAllTokens(),
+    ]);
+    let list = startList.map((token) => {
+      const tokenInfo = allTokens.find((t) => t.symbol === token.symbol);
+      let img = "";
+      let imgBackup = "";
+      if (tokenInfo) {
+        img =
+          tokenInfo.metadata.icon && tokenInfo.metadata.icon.length > 0
+            ? tokenInfo.metadata.icon
+            : "/assets/images/wallet/hive-engine.svg";
+        imgBackup = "/assets/images/wallet/hive-engine.svg";
+      } else {
+        img =
+          token.symbol === BaseCurrencies.HIVE.toUpperCase()
+            ? `/assets/images/wallet/hive-logo.svg`
+            : `/assets/images/wallet/hbd-logo.svg`;
+      }
+      return {
+        value: token,
+        label: token.symbol,
+        img: img,
+        imgBackup,
+      };
+    });
+    let endList: OptionItem[] = [
+      {
+        value: { symbol: BaseCurrencies.HIVE.toUpperCase(), precision: 3 },
+        label: BaseCurrencies.HIVE.toUpperCase(),
+        img: `/assets/images/wallet/hive-logo.svg`,
+      },
+      {
+        value: { symbol: BaseCurrencies.HBD.toUpperCase(), precision: 3 },
+        label: BaseCurrencies.HBD.toUpperCase(),
+        img: `/assets/images/wallet/hbd-logo.svg`,
+      },
+      ...allTokens
+        .filter((token: Token) => token.precision !== 0) // Remove token that doesn't allow decimals
+        .map((token: Token) => {
+          let img = "";
+          img = token.metadata.icon ?? "/assets/images/wallet/hive-engine.svg";
+          return {
+            value: token,
+            label: token.symbol,
+            img: img,
+            imgBackup: "/assets/images/wallet/hive-engine.svg",
+          };
+        }),
+    ];
     // const lastUsed = await SwapTokenUtils.getLastUsed();
-    // setStartToken(
-    //   lastUsed.from
-    //     ? list.find((t) => t.value.symbol === lastUsed.from.symbol) || list[0]
-    //     : list[0]
-    // );
-    // setStartTokenListOptions(list);
-    // const endTokenToSet = lastUsed.to
-    //   ? endList.find((t) => t.value.symbol === lastUsed.to.symbol)
-    //   : endList[1];
-    // setEndToken(endTokenToSet);
-    // setEndTokenListOptions(endList);
+    setStartToken(list[0]);
+    setStartTokenListOptions(list);
+    const endTokenToSet = endList[1];
+    setEndToken(endTokenToSet);
+    setEndTokenListOptions(endList);
   };
 
   const calculateEstimate = async (
@@ -363,7 +370,7 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
 
     // navigateToWithParams(Screen.CONFIRMATION_PAGE, {
     //   method: KeychainKeyTypes.active,
-    //   message: chrome.i18n.getMessage("html_popup_swap_token_confirm_message"),
+    //   message: t("html_popup_swap_token_confirm_message"),
     //   fields: fields,
     //   title: "html_popup_swap_token_confirm_title",
     //   formParams: getFormParams(),
@@ -484,10 +491,7 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
     return (
       <div className="token-swaps" aria-label="token-swaps">
         <div>
-          <div className="caption">
-            {" "}
-            {chrome.i18n.getMessage("swap_no_token")}
-          </div>
+          <div className="caption"> {t("swap_no_token.message")}</div>
         </div>
       </div>
     );
@@ -496,13 +500,11 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
       <div className="token-swaps" aria-label="token-swaps">
         {!loading && !underMaintenance && !serviceUnavailable && (
           <>
-            <div className="caption">
-              {chrome.i18n.getMessage("swap_caption")}
-            </div>
+            <div className="caption">{t("swap_caption.message")}</div>
 
             <div className="top-row">
               <div className="fee">
-                {chrome.i18n.getMessage("swap_fee")}: {swapConfig.fee?.amount}%
+                {t("swap_caption,message")}: {swapConfig.fee?.amount}%
               </div>
               <SVGIcon
                 className="swap-history-button"
@@ -538,7 +540,7 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
                     />
                   </div>
                   <span className="available">
-                    {chrome.i18n.getMessage("popup_html_available")} :{" "}
+                    {t("popup_html_available.message")} :{" "}
                     {startToken?.value.balance
                       ? FormatUtils.withCommas(startToken?.value.balance)
                       : ""}
@@ -603,10 +605,8 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
                       <>
                         {
                           <span>
-                            {chrome.i18n.getMessage(
-                              "swap_autorefresh",
-                              autoRefreshCountdown + ""
-                            )}
+                            {/* //TODO check how to add params. autoRefreshCountdown */}
+                            {t("swap_autorefresh.message")}
                           </span>
                         }
                       </>
@@ -621,7 +621,7 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
                     }
                   >
                     <div className="title">
-                      {chrome.i18n.getMessage("swap_advanced_parameters")}
+                      {t("swap_advanced_parameters.message")}
                     </div>
                     <SVGIcon
                       icon={SVGIcons.GLOBAL_ARROW}
@@ -661,9 +661,7 @@ const TokenSwaps = ({ price, tokenMarket, activeAccount }: Props) => {
         {underMaintenance && (
           <div className="maintenance-mode">
             <SVGIcon icon={SVGIcons.MESSAGE_ERROR} />
-            <div className="text">
-              {chrome.i18n.getMessage("swap_under_maintenance")}
-            </div>
+            <div className="text">{t("swap_under_maintenance.message")}</div>
           </div>
         )}
         {serviceUnavailable && <ServiceUnavailablePage />}

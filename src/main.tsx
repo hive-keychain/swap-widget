@@ -1,6 +1,6 @@
+import { Theme, ThemeContext } from "@theme-context";
 import React, { useEffect, useState } from "react";
 import { App } from "./app";
-import { Theme, ThemeContext } from "./theme.context";
 
 export const Main = () => {
   const [theme, setTheme] = useState<Theme>();

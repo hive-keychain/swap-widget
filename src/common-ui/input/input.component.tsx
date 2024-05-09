@@ -1,12 +1,13 @@
+import { AutocompleteBox } from "@common-ui/autocomplete/autocomplete-box.component";
+import { SVGIcons } from "@common-ui/icons.enum";
+import { InputType } from "@common-ui/input/input-type.enum";
+import { Separator } from "@common-ui/separator/separator.component";
+import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
 import { AutoCompleteValuesType } from "@interfaces/autocomplete.interface";
 import { FormUtils } from "@utils/form.utils";
 import React, { useEffect, useState } from "react";
 import { FieldError } from "react-hook-form";
-import { AutocompleteBox } from "src/common-ui/autocomplete/autocomplete-box.component";
-import { SVGIcons } from "src/common-ui/icons.enum";
-import { Separator } from "src/common-ui/separator/separator.component";
-import { SVGIcon } from "src/common-ui/svg-icon/svg-icon.component";
-import { InputType } from "./input-type.enum";
+import { useTranslation } from "react-i18next";
 
 export interface InputProps {
   value: any;
@@ -37,6 +38,7 @@ export interface InputProps {
 }
 
 const InputComponent = React.forwardRef((props: InputProps, ref: any) => {
+  const { t } = useTranslation();
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordDisplay, setPasswordDisplayed] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -63,13 +65,13 @@ const InputComponent = React.forwardRef((props: InputProps, ref: any) => {
         <div className="label">
           {props.skipLabelTranslation
             ? props.label
-            : chrome.i18n.getMessage(props.label)}{" "}
+            : t(props.label + ".message")}{" "}
           {props.required ? "*" : ""}
           {props.hint && (
             <div className="hint">
               {props.skipHintTranslation
                 ? props.hint
-                : chrome.i18n.getMessage(props.hint)}
+                : t(props.hint + ".message")}
             </div>
           )}
         </div>
@@ -95,7 +97,7 @@ const InputComponent = React.forwardRef((props: InputProps, ref: any) => {
               props.placeholder
                 ? props.skipPlaceholderTranslation
                   ? props.placeholder
-                  : chrome.i18n.getMessage(props.placeholder)
+                  : t(props.placeholder + ".message")
                 : ""
             } ${props.required ? "*" : ""}`}
             value={props.value}

@@ -178,6 +178,7 @@ const getLastUsed = async () => {
   // );
   // if (!lastUsed) return { from: null, to: null };
   // else return lastUsed;
+  return { from: null, to: null };
 };
 
 const setAsInitiated = async (swapId: ISwap["id"]) => {

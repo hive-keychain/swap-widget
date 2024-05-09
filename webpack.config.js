@@ -69,6 +69,10 @@ module.exports = {
       "@configFile": path.resolve(__dirname, "src/config.ts"),
       "@classes": path.resolve(__dirname, "src/classes/"),
       "@common-style": path.resolve(__dirname, "src/common-style/"),
+      "@components": path.resolve(__dirname, "src/components/"),
+      "@common-ui": path.resolve(__dirname, "src/common-ui/"),
+      "@theme-context": path.resolve(__dirname, "src/theme.context.tsx"),
+      "@i18n": path.resolve(__dirname, "src/i18n/"),
     },
   },
   plugins: [

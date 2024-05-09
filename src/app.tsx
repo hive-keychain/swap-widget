@@ -1,36 +1,104 @@
+import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
+import { TokenSwapsComponent } from "@components/token-swaps/token-swaps.component";
+import { ActiveAccount, RC } from "@interfaces/active-account.interface";
+import { CurrencyPrices } from "@interfaces/bittrex.interface";
+import { TokenMarket } from "@interfaces/tokens.interface";
+import { useThemeContext } from "@theme-context";
+import AccountUtils from "@utils/hive/account.utils";
 import CurrencyPricesUtils from "@utils/hive/currency-prices.utils";
 import TokensUtils from "@utils/hive/tokens.utils";
 import Logger from "@utils/logger.utils";
 import React, { useEffect, useState } from "react";
-import RotatingLogoComponent from "./common-ui/rotating-logo/rotating-logo.component";
-import { useThemeContext } from "./theme.context";
+
+export interface GenericObjectStringKeyPair {
+  [key: string]: string;
+}
+
+const DEFAULT_FORM_PARAMS = {
+  partnerUsername: "keychain.tests",
+  from: "hbd",
+  to: "hive",
+  slippage: "5",
+};
 
 export const App = () => {
   const { theme } = useThemeContext();
   const [loading, setLoading] = useState(true);
+  const [formParams, setFormParams] = useState<GenericObjectStringKeyPair>();
+  const [activeAccount, setActiveAccount] = useState<ActiveAccount>();
+  const [prices, setPrices] = useState<CurrencyPrices>();
+  const [tokenMarket, setTokenMarket] = useState<TokenMarket[]>();
+
   useEffect(() => {
     init();
     console.log({ theme }); //TODO remove line
   }, []);
 
   const init = async () => {
+    //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slippage=5
+    let tempFormParams: GenericObjectStringKeyPair = {};
+    const currentUrl = window.location.href;
+    const searchParams = new URLSearchParams(currentUrl.split("?")[1]);
+    if (searchParams.size > 0) {
+      // let params = [];
+      for (const p of searchParams) {
+        // params.push(p);
+        if (!tempFormParams.hasOwnProperty(p[0])) {
+          tempFormParams[p[0]] = p[1];
+        }
+      }
+      console.log({ tempFormParams }); //TODO remove line
+      setFormParams(tempFormParams);
+      //TODO assign this to form params
+    } else {
+      tempFormParams = DEFAULT_FORM_PARAMS;
+    }
+    setFormParams(DEFAULT_FORM_PARAMS);
+    //find user extended info
+    if (await AccountUtils.doesAccountExist(tempFormParams.partnerUsername)) {
+      setActiveAccount({
+        name: tempFormParams.partnerUsername,
+        account: await AccountUtils.getExtendedAccount(
+          tempFormParams.partnerUsername
+        ),
+        keys: {},
+        //TODO bellow work in await AccountUtils.getRCMana(tempFormParams.username)
+        rc: {} as RC,
+      });
+    } else {
+      Logger.log("Account not found in HIVE.", {
+        username: tempFormParams.partnerUsername,
+      });
+      setActiveAccount({
+        name: "keychain.tests",
+        account: await AccountUtils.getExtendedAccount("keychain.tests"),
+        keys: {},
+        //TODO bellow work in await AccountUtils.getRCMana(tempFormParams.username)
+        rc: {} as RC,
+      });
+    }
     //currencyPrices
     try {
-      const prices = await CurrencyPricesUtils.getPrices();
-      console.log({ prices });
-      //TODO set state.
+      const tempPrices = await CurrencyPricesUtils.getPrices();
+      setPrices(tempPrices);
     } catch (e) {
       Logger.error("currency price error", (e as any).toString());
     }
 
     //tokenMarket
     try {
-      const tokensMarket = await TokensUtils.getTokensMarket({}, 1000, 0, []);
-      console.log({ tokensMarket });
-      //TODo set state
+      const tempTokensMarket = await TokensUtils.getTokensMarket(
+        {},
+        1000,
+        0,
+        []
+      );
+      setTokenMarket(tempTokensMarket);
     } catch (error) {
       Logger.error("tokensMarket error", (error as any).toString());
     }
+
+    setLoading(false);
   };
 
   return (
@@ -40,195 +108,19 @@ export const App = () => {
           <RotatingLogoComponent />
         </div>
       )}
+      {!loading &&
+        formParams &&
+        Object.keys(formParams).length > 0 &&
+        prices &&
+        tokenMarket &&
+        activeAccount && (
+          <TokenSwapsComponent
+            price={prices}
+            tokenMarket={tokenMarket}
+            formParams={formParams}
+            activeAccount={activeAccount}
+          />
+        )}
     </div>
   );
-  //TODO bellow uncomment and code
-  // else if (!startTokenListOptions.length) {
-  //   return (
-  //     <div className="token-swaps" aria-label="token-swaps">
-  //       <div>
-  //         <div className="caption">
-  //           {" "}
-  //           {chrome.i18n.getMessage("swap_no_token")}
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // } else
-  //   return (
-  //     <div className="token-swaps" aria-label="token-swaps">
-  //       {!loading && !underMaintenance && !serviceUnavailable && (
-  //         <>
-  //           <div className="caption">
-  //             {chrome.i18n.getMessage("swap_caption")}
-  //           </div>
-
-  //           <div className="top-row">
-  //             <div className="fee">
-  //               {chrome.i18n.getMessage("swap_fee")}: {swapConfig.fee?.amount}%
-  //             </div>
-  //             <SVGIcon
-  //               className="swap-history-button"
-  //               icon={SVGIcons.SWAPS_HISTORY}
-  //               onClick={() => navigateTo(Screen.TOKENS_SWAP_HISTORY)}
-  //             />
-  //           </div>
-  //           <FormContainer>
-  //             <div className="form-fields">
-  //               <div className="start-token">
-  //                 <div className="inputs">
-  //                   {startTokenListOptions.length > 0 && startToken && (
-  //                     <ComplexeCustomSelect
-  //                       selectedItem={startToken}
-  //                       options={startTokenListOptions}
-  //                       setSelectedItem={setStartToken}
-  //                       label="token"
-  //                       filterable
-  //                     />
-  //                   )}
-  //                   <InputComponent
-  //                     type={InputType.NUMBER}
-  //                     value={amount}
-  //                     onChange={setAmount}
-  //                     label="popup_html_transfer_amount"
-  //                     placeholder="popup_html_transfer_amount"
-  //                     min={0}
-  //                     rightActionClicked={() =>
-  //                       setAmount(startToken?.value.balance)
-  //                     }
-  //                     rightActionIcon={SVGIcons.INPUT_MAX}
-  //                   />
-  //                 </div>
-  //                 <span className="available">
-  //                   {chrome.i18n.getMessage("popup_html_available")} :{" "}
-  //                   {startToken?.value.balance
-  //                     ? FormatUtils.withCommas(startToken?.value.balance)
-  //                     : ""}
-  //                 </span>
-  //               </div>
-  //               <SVGIcon
-  //                 icon={SVGIcons.SWAPS_SWITCH}
-  //                 onClick={swapStartAndEnd}
-  //                 className="swap-icon"
-  //               />
-  //               <div className="end-token">
-  //                 <div className="inputs">
-  //                   {endTokenListOptions.length > 0 && endToken && (
-  //                     <ComplexeCustomSelect
-  //                       selectedItem={endToken}
-  //                       options={endTokenListOptions}
-  //                       setSelectedItem={setEndToken}
-  //                       label="token"
-  //                       filterable
-  //                     />
-  //                   )}
-  //                   <CustomTooltip
-  //                     color="grey"
-  //                     message={getTokenUSDPrice(
-  //                       estimateValue,
-  //                       endToken?.value.symbol
-  //                     )}
-  //                     position={"top"}
-  //                     skipTranslation
-  //                   >
-  //                     <InputComponent
-  //                       type={InputType.TEXT}
-  //                       value={
-  //                         estimateValue
-  //                           ? FormatUtils.withCommas(estimateValue!)
-  //                           : ""
-  //                       }
-  //                       disabled
-  //                       onChange={() => {}}
-  //                       placeholder="popup_html_transfer_amount"
-  //                       rightActionIconClassname={
-  //                         loadingEstimate ? "rotate" : ""
-  //                       }
-  //                       rightActionIcon={SVGIcons.SWAPS_ESTIMATE_REFRESH}
-  //                       rightActionClicked={() => {
-  //                         if (!estimate) return;
-  //                         calculateEstimate(
-  //                           amount,
-  //                           startToken!,
-  //                           endToken!,
-  //                           swapConfig!
-  //                         );
-  //                         setAutoRefreshCountdown(
-  //                           Config.swaps.autoRefreshPeriodSec
-  //                         );
-  //                       }}
-  //                     />
-  //                   </CustomTooltip>
-  //                 </div>
-  //                 <div className="countdown">
-  //                   {!!autoRefreshCountdown && (
-  //                     <>
-  //                       {
-  //                         <span>
-  //                           {chrome.i18n.getMessage(
-  //                             "swap_autorefresh",
-  //                             autoRefreshCountdown + ""
-  //                           )}
-  //                         </span>
-  //                       }
-  //                     </>
-  //                   )}
-  //                 </div>
-  //               </div>
-  //               <div className="advanced-parameters">
-  //                 <div
-  //                   className="title-panel"
-  //                   onClick={() =>
-  //                     setIsAdvancedParametersOpen(!isAdvancedParametersOpen)
-  //                   }
-  //                 >
-  //                   <div className="title">
-  //                     {chrome.i18n.getMessage("swap_advanced_parameters")}
-  //                   </div>
-  //                   <SVGIcon
-  //                     icon={SVGIcons.GLOBAL_ARROW}
-  //                     onClick={() =>
-  //                       setIsAdvancedParametersOpen(!isAdvancedParametersOpen)
-  //                     }
-  //                     className={`advanced-parameters-toggle ${
-  //                       isAdvancedParametersOpen ? "open" : "closed"
-  //                     }`}
-  //                   />
-  //                 </div>
-  //                 {isAdvancedParametersOpen && (
-  //                   <div className="advanced-parameters-container">
-  //                     <InputComponent
-  //                       type={InputType.NUMBER}
-  //                       min={5}
-  //                       step={1}
-  //                       value={slippage}
-  //                       onChange={setSlippage}
-  //                       label="html_popup_swaps_slipperage"
-  //                       placeholder="html_popup_swaps_slipperage"
-  //                       // tooltip="html_popup_swaps_slippage_definition"
-  //                     />
-  //                   </div>
-  //                 )}
-  //               </div>
-  //             </div>
-  //             <OperationButtonComponent
-  //               requiredKey={KeychainKeyTypesLC.active}
-  //               onClick={processSwap}
-  //               label={"html_popup_swaps_process_swap"}
-  //             />
-  //           </FormContainer>
-  //         </>
-  //       )}
-
-  //       {underMaintenance && (
-  //         <div className="maintenance-mode">
-  //           <SVGIcon icon={SVGIcons.MESSAGE_ERROR} />
-  //           <div className="text">
-  //             {chrome.i18n.getMessage("swap_under_maintenance")}
-  //           </div>
-  //         </div>
-  //       )}
-  //       {serviceUnavailable && <ServiceUnavailablePage />}
-  //     </div>
-  //   );
 };

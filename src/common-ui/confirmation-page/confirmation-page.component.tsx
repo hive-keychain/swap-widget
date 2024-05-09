@@ -3,14 +3,15 @@
 // import { setTitleContainerProperties } from '@popup/multichain/actions/title-container.actions';
 // import { RootState } from '@popup/multichain/store';
 // import { Screen } from '@reference-data/screen.enum';
+import ButtonComponent, {
+  ButtonType,
+} from "@common-ui/button/button.component";
+import { ConfirmationPageFields } from "@common-ui/confirmation-page/confirmation-field.interface";
+import { Separator } from "@common-ui/separator/separator.component";
 import { ActiveAccount } from "@interfaces/active-account.interface";
 import { KeychainKeyTypes } from "hive-keychain-commons";
 import React, { BaseSyntheticEvent, useEffect, useState } from "react";
-import ButtonComponent, {
-  ButtonType,
-} from "src/common-ui/button/button.component";
-import { ConfirmationPageFields } from "src/common-ui/confirmation-page/confirmation-field.interface";
-import { Separator } from "src/common-ui/separator/separator.component";
+import { useTranslation } from "react-i18next";
 
 export interface ConfirmationPageParams {
   fields: ConfirmationPageFields[];
@@ -43,6 +44,7 @@ const ConfirmationPage = ({
 // setTitleContainerProperties,
 // addCaptionToLoading,
 ConfirmationPageParams) => {
+  const { t } = useTranslation();
   const [willUseMultisig, setWillUseMultisig] = useState<boolean>();
   const [hasField] = useState(fields && fields.length !== 0);
   useEffect(() => {
@@ -126,16 +128,17 @@ ConfirmationPageParams) => {
 
         {warningMessage && (
           <div data-testid="warning-message" className="warning-message">
+            {/* //TODO check bellow how to add warningParams to t */}
             {skipWarningTranslation
               ? warningMessage
-              : chrome.i18n.getMessage(warningMessage, warningParams)}
+              : t(warningMessage + ".message")}
           </div>
         )}
         {willUseMultisig && (
           <div data-testid="use-multisig-message" className="multisig-message">
             <img src="/assets/images/multisig/logo.png" className="logo" />
             <div className="message">
-              {chrome.i18n.getMessage("multisig_disclaimer_message")}
+              {t("multisig_disclaimer_message.message")}
             </div>
           </div>
         )}
@@ -144,9 +147,7 @@ ConfirmationPageParams) => {
             {fields.map((field, index) => (
               <React.Fragment key={field.label}>
                 <div className="field">
-                  <div className="label">
-                    {chrome.i18n.getMessage(field.label)}
-                  </div>
+                  <div className="label">{t(field.label + ".message")}</div>
                   <div className={`value ${field.valueClassName ?? ""}`}>
                     {field.value}
                   </div>

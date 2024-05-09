@@ -1,18 +1,20 @@
 // import { setInfoMessage } from '@popup/multichain/actions/message.actions';
 // import { RootState } from '@popup/multichain/store';
+import { CustomTooltip } from "@common-ui/custom-tooltip/custom-tooltip.component";
+import { SVGIcons } from "@common-ui/icons.enum";
+import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
 import FormatUtils from "@utils/format.utils";
 import { ISwap, SwapStatus } from "hive-keychain-commons";
 import moment from "moment";
 import { default as React, useState } from "react";
-import { CustomTooltip } from "src/common-ui/custom-tooltip/custom-tooltip.component";
-import { SVGIcons } from "src/common-ui/icons.enum";
-import { SVGIcon } from "src/common-ui/svg-icon/svg-icon.component";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   swap: ISwap;
 }
 
 const TokenSwapsHistoryItem = ({ swap }: Props) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const copyIdToCliplboard = (id: string) => {
@@ -26,18 +28,18 @@ const TokenSwapsHistoryItem = ({ swap }: Props) => {
     switch (status) {
       case SwapStatus.PENDING:
         return transferInitiated
-          ? chrome.i18n.getMessage("swap_status_pending")
-          : chrome.i18n.getMessage("swap_transfer_not_sent");
+          ? t("swap_status_pending.message")
+          : t("swap_transfer_not_sent.message");
       case SwapStatus.COMPLETED:
-        return chrome.i18n.getMessage("swap_status_completed");
+        return t("swap_status_completed.message");
       case SwapStatus.CANCELED_DUE_TO_ERROR:
-        return chrome.i18n.getMessage("swap_status_canceled_due_to_error");
+        return t("swap_status_canceled_due_to_error.message");
       case SwapStatus.FUNDS_RETURNED:
-        return chrome.i18n.getMessage("swap_status_returned");
+        return t("swap_status_returned.message");
       case SwapStatus.REFUNDED_SLIPPAGE:
-        return chrome.i18n.getMessage("swap_status_refunded");
+        return t("swap_status_refunded.message");
       case SwapStatus.STARTED:
-        return chrome.i18n.getMessage("swap_status_started");
+        return t("swap_status_started.message");
     }
   };
 
@@ -76,9 +78,8 @@ const TokenSwapsHistoryItem = ({ swap }: Props) => {
     return `${getStatusMessage(swap.status, swap.transferInitiated)}
       <br/> ${
         [SwapStatus.PENDING, SwapStatus.STARTED].includes(swap.status)
-          ? chrome.i18n.getMessage("swap_last_update", [
-              moment(swap.updatedAt).format("YYYY-MM-DD HH:mm:ss"),
-            ])
+          ? //TODO bellow check how to add params.  [ moment(swap.updatedAt).format("YYYY-MM-DD HH:mm:ss")]
+            t("swap_last_update.message")
           : moment(swap.updatedAt).format("YYYY-MM-DD HH:mm:ss")
       }`;
   }
@@ -157,9 +158,7 @@ const TokenSwapsHistoryItem = ({ swap }: Props) => {
               ))}
             {!!swap.fee && (
               <div className="step">
-                <div className="step-number">
-                  {chrome.i18n.getMessage("swap_fee")}
-                </div>{" "}
+                <div className="step-number">{t("swap_fee.message")}</div>{" "}
                 <div className="details">
                   <div className="description">
                     {swap.fee} {swap.endToken}

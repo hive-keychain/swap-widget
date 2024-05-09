@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface AutocompleteProps {
   value: string;
@@ -15,15 +16,17 @@ const AutocompleteItemComponent = ({
   translateSublabel,
   onItemClick,
 }: AutocompleteProps) => {
+  const { t } = useTranslation();
   return (
     <div
       className="autocomplete-item"
       key={value}
-      onClick={() => onItemClick(value)}>
-      {translateValue ? chrome.i18n.getMessage(value) : value}{' '}
+      onClick={() => onItemClick(value)}
+    >
+      {translateValue ? t(value) : value}{" "}
       {subLabel && subLabel.trim().length > 0
-        ? `(${translateSublabel ? chrome.i18n.getMessage(subLabel) : subLabel})`
-        : ''}
+        ? `(${translateSublabel ? t(subLabel) : subLabel})`
+        : ""}
     </div>
   );
 };

@@ -5,7 +5,7 @@ import React from "react";
 // import { connect, ConnectedProps } from 'react-redux';
 import ButtonComponent, {
   ButtonProps,
-} from "src/common-ui/button/button.component";
+} from "@common-ui/button/button.component";
 
 type Props = ButtonProps & { requiredKey: KeychainKeyTypesLC };
 

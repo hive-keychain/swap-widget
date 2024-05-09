@@ -1,10 +1,10 @@
-import React, { BaseSyntheticEvent, useState } from "react";
-import { ReactSVG } from "react-svg";
-import { SVGIcons } from "src/common-ui/icons.enum";
 import {
   CustomTooltip,
   TooltipProps,
-} from "../custom-tooltip/custom-tooltip.component";
+} from "@common-ui/custom-tooltip/custom-tooltip.component";
+import { SVGIcons } from "@common-ui/icons.enum";
+import React, { BaseSyntheticEvent, useState } from "react";
+import { ReactSVG } from "react-svg";
 
 interface ISVGIconProps {
   dataTestId?: string;

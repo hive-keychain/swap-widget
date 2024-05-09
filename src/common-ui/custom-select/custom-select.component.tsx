@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Select, { SelectRenderer } from 'react-dropdown-select';
-import { CustomSelectItemComponent } from 'src/common-ui/custom-select/custom-select-item.component';
-import { SVGIcons } from 'src/common-ui/icons.enum';
-import { InputType } from 'src/common-ui/input/input-type.enum';
-import InputComponent from 'src/common-ui/input/input.component';
-import { SVGIcon } from 'src/common-ui/svg-icon/svg-icon.component';
+import { CustomSelectItemComponent } from "@common-ui/custom-select/custom-select-item.component";
+import { SVGIcons } from "@common-ui/icons.enum";
+import { InputType } from "@common-ui/input/input-type.enum";
+import InputComponent from "@common-ui/input/input.component";
+import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
+import React, { useEffect, useRef, useState } from "react";
+import Select, { SelectRenderer } from "react-dropdown-select";
+import { useTranslation } from "react-i18next";
 
 export interface OptionItem {
   label: string;
@@ -21,18 +22,19 @@ export interface CustomSelectProps<T> {
   options: T[];
   selectedItem: T;
   setSelectedItem: (item: T) => void;
-  background?: 'white';
+  background?: "white";
   onDelete?: (...params: any) => void;
   filterable?: boolean;
 }
 
 export function ComplexeCustomSelect<T extends OptionItem>(
-  itemProps: CustomSelectProps<T>,
+  itemProps: CustomSelectProps<T>
 ) {
+  const { t } = useTranslation();
   const ref = useRef<HTMLInputElement>(null);
 
   const [filteredOptions, setFilteredOptions] = useState(itemProps.options);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     setFilteredOptions(filter(query));
@@ -42,7 +44,7 @@ export function ComplexeCustomSelect<T extends OptionItem>(
     return itemProps.options.filter(
       (option) =>
         option.label.toLowerCase().includes(query.toLowerCase()) ||
-        option.subLabel?.toLowerCase().includes(query.toLowerCase()),
+        option.subLabel?.toLowerCase().includes(query.toLowerCase())
     );
   };
 
@@ -51,8 +53,9 @@ export function ComplexeCustomSelect<T extends OptionItem>(
       <div
         className="selected-item"
         onClick={() => {
-          selectProps.methods.dropDown('close');
-        }}>
+          selectProps.methods.dropDown("close");
+        }}
+      >
         {itemProps.selectedItem.img && (
           <img className="left-image" src={itemProps.selectedItem.img} />
         )}
@@ -90,7 +93,7 @@ export function ComplexeCustomSelect<T extends OptionItem>(
           <InputComponent
             onChange={setQuery}
             value={query}
-            placeholder={''}
+            placeholder={""}
             type={InputType.TEXT}
             ref={ref}
             classname="filter-input"
@@ -103,7 +106,7 @@ export function ComplexeCustomSelect<T extends OptionItem>(
             item={option}
             isSelected={option.value === itemProps.selectedItem.value}
             handleItemClicked={() => itemProps.setSelectedItem(option)}
-            closeDropdown={() => methods.dropDown('close')}
+            closeDropdown={() => methods.dropDown("close")}
             onDelete={itemProps.onDelete}
             canDelete={option.canDelete}
           />
@@ -118,7 +121,7 @@ export function ComplexeCustomSelect<T extends OptionItem>(
         <div className="label">
           {itemProps.skipLabelTranslation
             ? itemProps.label
-            : chrome.i18n.getMessage(itemProps.label)}
+            : t(itemProps.label + ".message")}
         </div>
       )}
       <Select
@@ -129,7 +132,7 @@ export function ComplexeCustomSelect<T extends OptionItem>(
         contentRenderer={customLabelRender}
         dropdownRenderer={customDropdownRenderer}
         className={`custom-select ${
-          itemProps.background ? itemProps.background : ''
+          itemProps.background ? itemProps.background : ""
         }`}
       />
     </div>

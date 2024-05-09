@@ -1,9 +1,9 @@
+import { OptionItem } from "@common-ui/custom-select/custom-select.component";
+import { SVGIcons } from "@common-ui/icons.enum";
+import { PreloadedImage } from "@common-ui/preloaded-image/preloaded-image.component";
+import { Separator } from "@common-ui/separator/separator.component";
+import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
 import React, { BaseSyntheticEvent } from "react";
-import { OptionItem } from "src/common-ui/custom-select/custom-select.component";
-import { SVGIcons } from "src/common-ui/icons.enum";
-import { PreloadedImage } from "../preloaded-image/preloaded-image.component";
-import { Separator } from "../separator/separator.component";
-import { SVGIcon } from "../svg-icon/svg-icon.component";
 
 interface CustomSelectItemProps<T> {
   isLast: boolean;

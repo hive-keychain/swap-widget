@@ -1,22 +1,24 @@
 // import { setInfoMessage } from '@popup/multichain/actions/message.actions';
 // import { setTitleContainerProperties } from '@popup/multichain/actions/title-container.actions';
 // import { RootState } from '@popup/multichain/store';
+import { SVGIcons } from "@common-ui/icons.enum";
+import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
+import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
+import { TokenSwapsHistoryItemComponent } from "@components/token-swaps-history/token-swaps-history-item/token-swaps-history-item.component";
 import Config from "@configFile";
 import { ActiveAccount } from "@interfaces/active-account.interface";
 import { SwapTokenUtils } from "@utils/swap-token.utils";
 import { ISwap } from "hive-keychain-commons";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "react-tabs/style/react-tabs.scss";
-import { SVGIcons } from "src/common-ui/icons.enum";
-import RotatingLogoComponent from "src/common-ui/rotating-logo/rotating-logo.component";
-import { SVGIcon } from "src/common-ui/svg-icon/svg-icon.component";
-import { TokenSwapsHistoryItemComponent } from "src/components/token-swaps-history/token-swaps-history-item/token-swaps-history-item.component";
 
 interface Props {
   activeAccount: ActiveAccount;
 }
 
 const TokenSwapsHistory = ({ activeAccount }: Props) => {
+  const { t } = useTranslation();
   const [history, setHistory] = useState<ISwap[]>([]);
   const [autoRefreshCountdown, setAutoRefreshCountdown] = useState<
     number | null
@@ -80,9 +82,8 @@ const TokenSwapsHistory = ({ activeAccount }: Props) => {
       <div className="refresh-panel">
         {!!autoRefreshCountdown && (
           <>
-            {chrome.i18n.getMessage("swap_refresh_countdown", [
-              autoRefreshCountdown?.toString(),
-            ])}
+            {/* //TODO check how to add the count  [autoRefreshCountdown?.toString()] */}
+            {t("swap_refresh_countdown.message")}
             <SVGIcon
               className={`swap-history-refresh ${
                 shouldRefresh ? "rotate" : ""
@@ -106,9 +107,7 @@ const TokenSwapsHistory = ({ activeAccount }: Props) => {
         {history.length === 0 && (
           <div className="empty-history-panel">
             <SVGIcon icon={SVGIcons.MESSAGE_ERROR} />
-            <span className="text">
-              {chrome.i18n.getMessage("swap_no_history")}
-            </span>
+            <span className="text">{t("swap_no_history.message")}</span>
           </div>
         )}
       </div>

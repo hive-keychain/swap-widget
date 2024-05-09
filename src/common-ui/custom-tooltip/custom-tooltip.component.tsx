@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-export type CustomTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
+export type CustomTooltipPosition = "top" | "bottom" | "left" | "right";
 export interface TooltipProps {
   position?: CustomTooltipPosition;
   delayShow?: number;
@@ -10,7 +11,7 @@ export interface TooltipProps {
   skipTranslation?: boolean;
   dataTestId?: string;
   additionalClassName?: string;
-  color?: 'white' | 'grey';
+  color?: "white" | "grey";
 }
 
 interface TooltipCoordinates {
@@ -33,6 +34,7 @@ export const CustomTooltip = ({
   additionalClassName,
   color,
 }: TooltipProps) => {
+  const { t } = useTranslation();
   const anchor = useRef<HTMLDivElement>(null);
   const tooltip = useRef<HTMLDivElement>(null);
 
@@ -41,7 +43,7 @@ export const CustomTooltip = ({
   let [coordinates, setCoordinates] = useState<TooltipCoordinates>();
 
   useEffect(() => {
-    if (isOpen && (!position || position === 'top')) {
+    if (isOpen && (!position || position === "top")) {
       const divInfo = anchor.current?.getBoundingClientRect();
       const tooltipInfo = tooltip.current?.getBoundingClientRect();
       if (divInfo && tooltipInfo) {
@@ -59,7 +61,7 @@ export const CustomTooltip = ({
     if (!divInfo) return;
 
     switch (position) {
-      case 'left': {
+      case "left": {
         setCoordinates({
           x:
             divInfo.left -
@@ -71,21 +73,21 @@ export const CustomTooltip = ({
         });
         break;
       }
-      case 'right': {
+      case "right": {
         setCoordinates({
           x: divInfo.left + divInfo.width + TOOLTIP_ARROW_SIZE + 2,
           y: divInfo.top + divInfo.height / 2,
         });
         break;
       }
-      case 'bottom': {
+      case "bottom": {
         setCoordinates({
           x: divInfo.left + divInfo.width / 2 - TOOLTIP_ARROW_SIZE,
           y: divInfo.top + divInfo.height + TOOLTIP_ARROW_SIZE,
         });
         break;
       }
-      case 'top':
+      case "top":
       default: {
         setCoordinates({
           x: divInfo.left + divInfo.width / 2,
@@ -99,7 +101,7 @@ export const CustomTooltip = ({
       () => {
         setOpen(true);
       },
-      delayShow ? delayShow : 250,
+      delayShow ? delayShow : 250
     );
     setTimeoutId(timeoutId);
   };
@@ -115,7 +117,8 @@ export const CustomTooltip = ({
       data-testid={dataTestId}
       className={`tooltip-container ${additionalClassName}`}
       onMouseEnter={show}
-      onMouseLeave={hide}>
+      onMouseLeave={hide}
+    >
       <div className="tooltip-anchor" ref={anchor}>
         {children}
       </div>
@@ -124,19 +127,20 @@ export const CustomTooltip = ({
         <div
           ref={tooltip}
           data-testid="tooltip-content"
-          className={`tooltip ${position ? position : 'top'} ${
-            color ? color : ''
+          className={`tooltip ${position ? position : "top"} ${
+            color ? color : ""
           }`}
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: coordinates.y,
             left: coordinates.x,
           }}
           dangerouslySetInnerHTML={{
             __html: skipTranslation
               ? message
-              : chrome.i18n.getMessage(message, messageParams),
-          }}></div>
+              : (t(message, messageParams) as string),
+          }}
+        ></div>
       )}
     </div>
   );

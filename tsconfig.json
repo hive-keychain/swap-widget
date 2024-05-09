@@ -19,8 +19,11 @@
       "@interfaces/*": ["src/interfaces/*"],
       "@configFile": ["src/config.ts"],
       "@classes/*": ["src/classes/*"],
-      "@common-style/*": ["src/common-style/*"]
+      "@common-style/*": ["src/common-style/*"],
+      "@components/*": ["src/components/*"],
+      "@common-ui/*": ["src/common-ui/*"],
+      "@theme-context": ["src/theme.context.tsx"],
+      "@i18n/*": ["src/i18n/*"]
     }
   }
-  // "include": ["src/**/*"]
 }

@@ -364,40 +364,40 @@ const getUserBalance = (account: string) => {
 //   });
 // };
 
-// /* istanbul ignore next */
-// /**
-//  * SSCJS request using HiveEngineConfigUtils.getApi().find.
-//  * @param {string} contract Fixed as 'tokens'
-//  * @param {string} table Fixed as 'tokens
-//  */
-// const getAllTokens = async (): Promise<Token[]> => {
-//   let tokens = [];
-//   let offset = 0;
-//   do {
-//     const newTokens = await getTokens(offset);
-//     tokens.push(...newTokens);
-//     offset += 1000;
-//   } while (tokens.length % 1000 === 0);
-//   return tokens;
-// };
+/* istanbul ignore next */
+/**
+ * SSCJS request using HiveEngineConfigUtils.getApi().find.
+ * @param {string} contract Fixed as 'tokens'
+ * @param {string} table Fixed as 'tokens
+ */
+const getAllTokens = async (): Promise<Token[]> => {
+  let tokens = [];
+  let offset = 0;
+  do {
+    const newTokens = await getTokens(offset);
+    tokens.push(...newTokens);
+    offset += 1000;
+  } while (tokens.length % 1000 === 0);
+  return tokens;
+};
 
-// const getTokens = async (offset: number) => {
-//   return (
-//     await HiveEngineUtils.get<any[]>({
-//       contract: 'tokens',
-//       table: 'tokens',
-//       query: {},
-//       limit: 1000,
-//       offset: offset,
-//       indexes: [],
-//     })
-//   ).map((t: any) => {
-//     return {
-//       ...t,
-//       metadata: JSON.parse(t.metadata),
-//     };
-//   });
-// };
+const getTokens = async (offset: number) => {
+  return (
+    await HiveEngineUtils.get<any[]>({
+      contract: "tokens",
+      table: "tokens",
+      query: {},
+      limit: 1000,
+      offset: offset,
+      indexes: [],
+    })
+  ).map((t: any) => {
+    return {
+      ...t,
+      metadata: JSON.parse(t.metadata),
+    };
+  });
+};
 
 const getTokenInfo = async (symbol: string): Promise<Token> => {
   return (
@@ -469,7 +469,7 @@ const TokensUtils = {
   getUserBalance, //*
   // getIncomingDelegations,
   // getOutgoingDelegations,
-  // getAllTokens,
+  getAllTokens,
   getTokensMarket,
   // getHiveEngineTokenValue,
   // getStakeTokenOperation,

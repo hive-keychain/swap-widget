@@ -1,13 +1,12 @@
-import React from 'react';
-import { SVGIcons } from 'src/common-ui/icons.enum';
-import { SVGIcon } from 'src/common-ui/svg-icon/svg-icon.component';
+import { SVGIcons } from "@common-ui/icons.enum";
+import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
+import { t } from "i18next";
+import React from "react";
 
 const ServiceUnavailablePage = () => (
   <div className="service-unavailable-page">
     <SVGIcon icon={SVGIcons.MESSAGE_ERROR} />
-    <div className="text">
-      {chrome.i18n.getMessage('service_unavailable_message')}
-    </div>
+    <div className="text">{t("service_unavailable_message.message")}</div>
   </div>
 );
 

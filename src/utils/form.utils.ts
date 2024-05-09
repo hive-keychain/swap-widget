@@ -1,6 +1,7 @@
 import Logger from "@utils/logger.utils";
 import Joi, { PartialSchemaMap } from "joi";
 import { FieldError } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 const FormValidationError: Record<string, string> = {
   ["string.empty"]: "validation_error_mandatory",
@@ -11,11 +12,11 @@ const FormValidationError: Record<string, string> = {
 };
 
 const parseJoiError = (error: FieldError) => {
+  const { t } = useTranslation();
   Logger.error("Error in form: ", error);
-  let errMessage = chrome.i18n.getMessage(
-    FormValidationError[error.type],
-    error.ref?.value ? [error.ref.value] : []
-  );
+  //TODO bellow see how to add
+  //error.ref?.value ? [error.ref.value] : []
+  let errMessage = t(FormValidationError[error.type]);
 
   return errMessage;
 };

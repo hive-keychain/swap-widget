@@ -6,6 +6,7 @@ import {
 // import { AccountValueType } from '@popup/hive/pages/app-container/home/estimated-account-value-section/estimated-account-value-section.component';
 import { Keys } from "@interfaces/keys.interface";
 import { LocalAccount } from "@interfaces/local-account.interface";
+import { HiveTxUtils } from "@utils/hive/hive-tx.utils";
 // import EncryptUtils from 'src/popup/hive/utils/encrypt.utils';
 import { KeysUtils } from "@utils/hive/keys.utils";
 // import MkUtils from 'src/popup/hive/utils/mk.utils';
@@ -434,17 +435,16 @@ const getExtendedAccount = async (
 const getExtendedAccounts = async (
   usernames: string[]
 ): Promise<ExtendedAccount[]> => {
-  // return await HiveTxUtils.getData("condenser_api.get_accounts", [usernames]);
-  return [];
+  return await HiveTxUtils.getData("condenser_api.get_accounts", [usernames]);
 };
 
 /* istanbul ignore next */
 const getAccount = async (username: string): Promise<ExtendedAccount[]> => {
-  // return HiveTxUtils.getData("condenser_api.get_accounts", [[username]]);
-  return [];
+  return HiveTxUtils.getData("condenser_api.get_accounts", [[username]]);
 };
 
 const getRCMana = async (username: string) => {
+  //TODO bellow fix & update
   // const result = await HiveTxUtils.getData("rc_api.find_rc_accounts", {
   //   accounts: [username],
   // });
@@ -462,6 +462,7 @@ const getRCMana = async (username: string) => {
   //   ...result.rc_accounts[0],
   //   percentage: percentage,
   // };
+  return {};
 };
 
 // const addKeyFromLedger = async (username: string, keys: Keys) => {

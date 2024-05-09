@@ -1,5 +1,5 @@
 import { KeychainApi } from "@api/keychain";
-import { Theme, ThemeOpacity } from "src/theme.context";
+import { Theme, ThemeOpacity } from "@theme-context";
 
 let imgColors: any = {};
 

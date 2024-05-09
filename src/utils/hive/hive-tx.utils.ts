@@ -308,28 +308,28 @@ const broadcastAndConfirmTransactionWithSignature = async (
   }
 };
 
-// /* istanbul ignore next */
-// const getData = async (
-//   method: string,
-//   params: any[] | object,
-//   key?: string,
-// ) => {
-//   const response = await call(method, params);
-//   if (response?.result) {
-//     return key ? response.result[key] : response.result;
-//   } else {
-//     if (window) {
-//       import('src/utils/rpc-switcher.utils').then(({ useWorkingRPC }) => {
-//         useWorkingRPC();
-//       });
-//     }
-//     throw new Error(
-//       `Error while retrieving data from ${method} : ${JSON.stringify(
-//         response.error,
-//       )}`,
-//     );
-//   }
-// };
+/* istanbul ignore next */
+const getData = async (
+  method: string,
+  params: any[] | object,
+  key?: string
+) => {
+  const response = await call(method, params);
+  // if (response?.result) {
+  return key ? response.result[key] : response.result;
+  // } else {
+  //   if (window) {
+  //     import('src/utils/rpc-switcher.utils').then(({ useWorkingRPC }) => {
+  //       useWorkingRPC();
+  //     });
+  //   }
+  //   throw new Error(
+  //     `Error while retrieving data from ${method} : ${JSON.stringify(
+  //       response.error,
+  //     )}`,
+  //   );
+  // }
+};
 
 // const useMultisigThroughBackgroundOnly = async (
 //   transaction: Transaction,
@@ -399,7 +399,7 @@ export const HiveTxUtils = {
   // sendOperation,
   // createSignAndBroadcastTransaction,
   // confirmTransaction,
-  // getData,
+  getData,
   setRpc,
   // createTransaction,
   // signTransaction,

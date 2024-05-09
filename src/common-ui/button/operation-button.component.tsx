@@ -1,4 +1,4 @@
-import { KeychainKeyTypesLC } from "../../interfaces/keychain.interface";
+import { KeychainKeyTypesLC } from "@interfaces/keychain.interface";
 // import { setErrorMessage } from '@popup/multichain/actions/message.actions';
 // import { RootState } from '@popup/multichain/store';
 import React from "react";

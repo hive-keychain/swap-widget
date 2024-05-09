@@ -1,6 +1,6 @@
+import Logger from "@utils/logger.utils";
 import Joi, { PartialSchemaMap } from "joi";
 import { FieldError } from "react-hook-form";
-import Logger from "../utils/logger.utils";
 
 const FormValidationError: Record<string, string> = {
   ["string.empty"]: "validation_error_mandatory",

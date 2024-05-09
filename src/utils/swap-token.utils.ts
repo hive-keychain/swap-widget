@@ -1,19 +1,16 @@
+import { KeychainSwapApi } from "@api/keychain-swap";
 import { Asset, ExtendedAccount } from "@hiveio/dhive";
-import { KeychainSwapApi } from "../api/keychain-swap";
-import { ActiveAccount } from "../interfaces/active-account.interface";
-import {
-  SwapConfig,
-  SwapServerStatus,
-} from "../interfaces/swap-token.interface";
-import { TokenBalance } from "../interfaces/tokens.interface";
-import { BaseCurrencies } from "./hive/currency.utils";
-import TokensUtils from "./hive/tokens.utils";
-import TransferUtils from "./hive/transfer.utils";
+import { ActiveAccount } from "@interfaces/active-account.interface";
+import { SwapConfig, SwapServerStatus } from "@interfaces/swap-token.interface";
+import { TokenBalance } from "@interfaces/tokens.interface";
+import { BaseCurrencies } from "@utils/hive/currency.utils";
+import TokensUtils from "@utils/hive/tokens.utils";
+import TransferUtils from "@utils/hive/transfer.utils";
 // import { LocalStorageKeyEnum } from '@reference-data/local-storage-key.enum';
+import FormatUtils from "@utils/format.utils";
 import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
-import FormatUtils from "src/utils/format.utils";
 // import LocalStorageUtils from 'src/utils/localStorage.utils';
-import Logger from "src/utils/logger.utils";
+import Logger from "@utils/logger.utils";
 
 //TODO cleanup code & ask about localStorage???
 

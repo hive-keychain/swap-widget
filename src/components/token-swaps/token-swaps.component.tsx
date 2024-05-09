@@ -1,9 +1,9 @@
-import { KeychainKeyTypesLC } from "../../interfaces/keychain.interface";
-import { SwapConfig } from "../../interfaces/swap-token.interface";
-import { TokenMarket } from "../../interfaces/tokens.interface";
+import { KeychainKeyTypesLC } from "@interfaces/keychain.interface";
+import { SwapConfig } from "@interfaces/swap-token.interface";
+import { TokenMarket } from "@interfaces/tokens.interface";
 // import { loadTokensMarket } from "@popup/hive/actions/token.actions";
-import { BaseCurrencies } from "src/utils/hive/currency.utils";
-import TokensUtils from "src/utils/hive/tokens.utils";
+import { BaseCurrencies } from "@utils/hive/currency.utils";
+import TokensUtils from "@utils/hive/tokens.utils";
 // import {
 //   addToLoadingList,
 //   removeFromLoadingList,
@@ -21,6 +21,12 @@ import TokensUtils from "src/utils/hive/tokens.utils";
 // import { setTitleContainerProperties } from "@popup/multichain/actions/title-container.actions";
 // import { RootState } from "@popup/multichain/store";
 // import { Screen } from "@reference-data/screen.enum";
+import Config from "@configFile";
+import { ActiveAccount } from "@interfaces/active-account.interface";
+import { CurrencyPrices } from "@interfaces/bittrex.interface";
+import FormatUtils from "@utils/format.utils";
+import Logger from "@utils/logger.utils";
+import { SwapTokenUtils } from "@utils/swap-token.utils";
 import { IStep } from "hive-keychain-commons";
 import { ThrottleSettings, throttle } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
@@ -38,12 +44,6 @@ import InputComponent from "src/common-ui/input/input.component";
 import RotatingLogoComponent from "src/common-ui/rotating-logo/rotating-logo.component";
 import ServiceUnavailablePage from "src/common-ui/service-unavailable-page/service-unavailable-page.component";
 import { SVGIcon } from "src/common-ui/svg-icon/svg-icon.component";
-import Config from "src/config";
-import FormatUtils from "src/utils/format.utils";
-import Logger from "src/utils/logger.utils";
-import { SwapTokenUtils } from "src/utils/swap-token.utils";
-import { ActiveAccount } from "../../interfaces/active-account.interface";
-import { CurrencyPrices } from "../../interfaces/bittrex.interface";
 
 //TODO important:
 //  -> an input for username.

@@ -1,6 +1,9 @@
 // import { setInfoMessage } from '@popup/multichain/actions/message.actions';
 // import { setTitleContainerProperties } from '@popup/multichain/actions/title-container.actions';
 // import { RootState } from '@popup/multichain/store';
+import Config from "@configFile";
+import { ActiveAccount } from "@interfaces/active-account.interface";
+import { SwapTokenUtils } from "@utils/swap-token.utils";
 import { ISwap } from "hive-keychain-commons";
 import React, { useEffect, useState } from "react";
 import "react-tabs/style/react-tabs.scss";
@@ -8,9 +11,6 @@ import { SVGIcons } from "src/common-ui/icons.enum";
 import RotatingLogoComponent from "src/common-ui/rotating-logo/rotating-logo.component";
 import { SVGIcon } from "src/common-ui/svg-icon/svg-icon.component";
 import { TokenSwapsHistoryItemComponent } from "src/components/token-swaps-history/token-swaps-history-item/token-swaps-history-item.component";
-import Config from "src/config";
-import { ActiveAccount } from "src/interfaces/active-account.interface";
-import { SwapTokenUtils } from "src/utils/swap-token.utils";
 
 interface Props {
   activeAccount: ActiveAccount;

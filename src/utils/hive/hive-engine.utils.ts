@@ -1,11 +1,11 @@
+import { KeychainError } from "@classes/keychain-error";
 import { CustomJsonOperation } from "@hiveio/dhive";
-import { Key } from "../../interfaces/keys.interface";
-import { TokenRequestParams } from "../../interfaces/token-request-params.interface";
-import { TokenTransaction } from "../../interfaces/tokens.interface";
-import { HiveEngineTransactionStatus } from "../../interfaces/transaction-status.interface";
-import { KeychainError } from "../../keychain-error";
-import { ErrorUtils } from "./error.utils";
-import { HiveEngineConfigUtils } from "./hive-engine-config.utils";
+import { Key } from "@interfaces/keys.interface";
+import { TokenRequestParams } from "@interfaces/token-request-params.interface";
+import { TokenTransaction } from "@interfaces/tokens.interface";
+import { HiveEngineTransactionStatus } from "@interfaces/transaction-status.interface";
+import { ErrorUtils } from "@utils/hive/error.utils";
+import { HiveEngineConfigUtils } from "@utils/hive/hive-engine-config.utils";
 
 const sendOperation = async (
   operations: CustomJsonOperation[],

@@ -1,4 +1,4 @@
-import { BaseApi } from "../api/base";
+import { BaseApi } from "@api/base";
 
 const buildUrl = (url: string) => {
   const baseURL =

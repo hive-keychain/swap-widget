@@ -1,6 +1,6 @@
 import { Asset, DynamicGlobalProperties } from "@hiveio/dhive";
-import { CurrencyPrices } from "../interfaces/bittrex.interface";
-import { GlobalProperties } from "../interfaces/global-properties.interface";
+import { CurrencyPrices } from "@interfaces/bittrex.interface";
+import { GlobalProperties } from "@interfaces/global-properties.interface";
 
 const withCommas = (nb: string, decimals = 3, removeTrailingZeros = false) => {
   const currency = nb.split(" ")[1];

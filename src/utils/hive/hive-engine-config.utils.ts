@@ -2,7 +2,7 @@ import {
   DefaultAccountHistoryApis,
   DefaultHiveEngineRpcs,
   HiveEngineConfig,
-} from "../../interfaces/hive-engine-rpc.interface";
+} from "@interfaces/hive-engine-rpc.interface";
 // import { LocalStorageKeyEnum } from '@reference-data/local-storage-key.enum';
 // import LocalStorageUtils from 'src/utils/localStorage.utils';
 

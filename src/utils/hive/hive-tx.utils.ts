@@ -1,4 +1,4 @@
-import { KeychainApi } from "../../api/keychain";
+import { KeychainApi } from "@api/keychain";
 // import { BackgroundMessage } from '@background/background-message.interface';
 // import { MultisigModule } from '@background/multisig.module';
 // import Hive from '@engrave/ledger-app-hive';
@@ -8,22 +8,22 @@ import {
   HiveTxBroadcastResult,
   HiveTxBroadcastSuccessResponse,
   TransactionResult,
-} from "../../interfaces/hive-tx.interface";
+} from "@interfaces/hive-tx.interface";
 // import { MultisigRequestSignatures } from '@interfaces/multisig.interface';
-import { Rpc } from "../../interfaces/rpc.interface";
+import { Rpc } from "@interfaces/rpc.interface";
 // import AccountUtils from '@popup/hive/utils/account.utils';
 // import MkUtils from '@popup/hive/utils/mk.utils';
 // import { MultisigUtils } from '@popup/hive/utils/multisig.utils';
 // import { BackgroundCommand } from '@reference-data/background-message-key.enum';
+import { AsyncUtils } from "@utils/async.utils";
+import { ErrorUtils } from "@utils/hive/error.utils";
 import {
   Transaction as HiveTransaction,
   config as HiveTxConfig,
   call,
 } from "hive-tx";
-import { AsyncUtils } from "../../utils/async.utils";
-import { ErrorUtils } from "./error.utils";
 // import { LedgerUtils } from 'src/utils/ledger.utils';
-import Logger from "../../utils/logger.utils";
+import Logger from "@utils/logger.utils";
 
 const MINUTE = 60;
 

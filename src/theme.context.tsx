@@ -1,5 +1,5 @@
+import Logger from "@utils/logger.utils";
 import { createContext, useContext } from "react";
-import Logger from "./utils/logger.utils";
 
 export enum Theme {
   DARK = "dark",

@@ -1,6 +1,6 @@
-import { KeychainError } from "../../keychain-error";
-import FormatUtils from "../../utils/format.utils";
-import Logger from "../../utils/logger.utils";
+import { KeychainError } from "@classes/keychain-error";
+import FormatUtils from "@utils/format.utils";
+import Logger from "@utils/logger.utils";
 
 enum BlockchainErrorType {
   ADJUST_BLANCE = "adjust_balance",

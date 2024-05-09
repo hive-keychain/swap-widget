@@ -4,10 +4,10 @@ import {
   ExtendedAccount,
 } from "@hiveio/dhive/lib/index-browser";
 // import { AccountValueType } from '@popup/hive/pages/app-container/home/estimated-account-value-section/estimated-account-value-section.component';
-import { Keys } from "src/interfaces/keys.interface";
-import { LocalAccount } from "src/interfaces/local-account.interface";
+import { Keys } from "@interfaces/keys.interface";
+import { LocalAccount } from "@interfaces/local-account.interface";
 // import EncryptUtils from 'src/popup/hive/utils/encrypt.utils';
-import { KeysUtils } from "./keys.utils";
+import { KeysUtils } from "@utils/hive/keys.utils";
 // import MkUtils from 'src/popup/hive/utils/mk.utils';
 // import { LocalStorageKeyEnum } from 'src/reference-data/local-storage-key.enum';
 // import { LedgerUtils } from 'src/utils/ledger.utils';

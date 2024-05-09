@@ -1,5 +1,5 @@
 import { Account, PrivateKey } from "@hiveio/dhive";
-import { Keys } from "src/interfaces/keys.interface";
+import { Keys } from "@interfaces/keys.interface";
 // import { WrongKeysOnUser } from 'src/popup/hive/pages/app-container/wrong-key-popup/wrong-key-popup.component';
 
 const getPublicKeyFromPrivateKeyString = (privateKeyS: string) => {

@@ -1,4 +1,4 @@
-import Config from "src/config";
+import Config from "@configFile";
 import { BaseApi } from "./base";
 
 const buildUrl = (url: string) => {

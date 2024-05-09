@@ -1,7 +1,7 @@
 import {
   AutoCompleteValue,
   AutoCompleteValues,
-} from "../interfaces/autocomplete.interface";
+} from "@interfaces/autocomplete.interface";
 
 const filterStringList = (list: string[], query: string) => {
   const filteredList = list.filter((item) =>

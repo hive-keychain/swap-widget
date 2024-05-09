@@ -1,13 +1,9 @@
-import Config from "../../config";
-import { Key, KeyType } from "../../interfaces/keys.interface";
-import { TokenRequestParams } from "../../interfaces/token-request-params.interface";
-import {
-  Token,
-  TokenBalance,
-  TokenMarket,
-} from "../../interfaces/tokens.interface";
-import { CustomJsonUtils } from "./custom-json.utils";
-import { HiveEngineUtils } from "./hive-engine.utils";
+import Config from "@configFile";
+import { Key, KeyType } from "@interfaces/keys.interface";
+import { TokenRequestParams } from "@interfaces/token-request-params.interface";
+import { Token, TokenBalance, TokenMarket } from "@interfaces/tokens.interface";
+import { CustomJsonUtils } from "@utils/hive/custom-json.utils";
+import { HiveEngineUtils } from "@utils/hive/hive-engine.utils";
 
 // /* istanbul ignore next */
 // const stakeToken = (

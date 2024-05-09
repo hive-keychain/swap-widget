@@ -2,6 +2,8 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const dotenv = require("dotenv");
+const { DefinePlugin } = require("webpack");
 module.exports = {
   mode: "development",
   entry: "./src/index.tsx",
@@ -60,8 +62,19 @@ module.exports = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    alias: {
+      "@utils": path.resolve(__dirname, "src/utils/"),
+      "@api": path.resolve(__dirname, "src/api/"),
+      "@interfaces": path.resolve(__dirname, "src/interfaces/"),
+      "@configFile": path.resolve(__dirname, "src/config.ts"),
+      "@classes": path.resolve(__dirname, "src/classes/"),
+      "@common-style": path.resolve(__dirname, "src/common-style/"),
+    },
   },
   plugins: [
+    new DefinePlugin({
+      "process.env": JSON.stringify(dotenv.config().parsed),
+    }),
     new CopyPlugin({
       patterns: [{ from: "public", to: "." }],
     }),

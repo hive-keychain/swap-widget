@@ -1,4 +1,4 @@
-import { Rpc } from "../interfaces/rpc.interface";
+import { Rpc } from "@interfaces/rpc.interface";
 
 export const DefaultRpcs: Rpc[] = [
   { uri: "https://api.hive.blog/", testnet: false },

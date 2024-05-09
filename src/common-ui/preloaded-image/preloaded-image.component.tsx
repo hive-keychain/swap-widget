@@ -1,8 +1,8 @@
+import { ColorsUtils } from "@utils/colors.utils";
 import React, { useEffect, useState } from "react";
 import { SVGIcons } from "src/common-ui/icons.enum";
 import { SVGIcon } from "src/common-ui/svg-icon/svg-icon.component";
 import { useThemeContext } from "src/theme.context";
-import { ColorsUtils } from "src/utils/colors.utils";
 
 interface PreloadedImageProps {
   className?: string;

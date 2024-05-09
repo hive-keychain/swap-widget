@@ -1,5 +1,5 @@
 import { TransferOperation } from "@hiveio/dhive";
-import { Key } from "../../interfaces/keys.interface";
+import { Key } from "@interfaces/keys.interface";
 
 // const getTransferWarning = (
 //   account: string,

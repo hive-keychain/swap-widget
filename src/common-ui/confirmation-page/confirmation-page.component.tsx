@@ -3,6 +3,7 @@
 // import { setTitleContainerProperties } from '@popup/multichain/actions/title-container.actions';
 // import { RootState } from '@popup/multichain/store';
 // import { Screen } from '@reference-data/screen.enum';
+import { ActiveAccount } from "@interfaces/active-account.interface";
 import { KeychainKeyTypes } from "hive-keychain-commons";
 import React, { BaseSyntheticEvent, useEffect, useState } from "react";
 import ButtonComponent, {
@@ -10,7 +11,6 @@ import ButtonComponent, {
 } from "src/common-ui/button/button.component";
 import { ConfirmationPageFields } from "src/common-ui/confirmation-page/confirmation-field.interface";
 import { Separator } from "src/common-ui/separator/separator.component";
-import { ActiveAccount } from "src/interfaces/active-account.interface";
 
 export interface ConfirmationPageParams {
   fields: ConfirmationPageFields[];

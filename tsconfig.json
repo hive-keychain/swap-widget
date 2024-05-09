@@ -12,7 +12,15 @@
     "strict": true,
     "target": "ES6",
     "resolveJsonModule": true,
-    "baseUrl": "."
-  },
-  "include": ["src/**/*"]
+    "baseUrl": ".",
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@api/*": ["src/api/*"],
+      "@interfaces/*": ["src/interfaces/*"],
+      "@configFile": ["src/config.ts"],
+      "@classes/*": ["src/classes/*"],
+      "@common-style/*": ["src/common-style/*"]
+    }
+  }
+  // "include": ["src/**/*"]
 }

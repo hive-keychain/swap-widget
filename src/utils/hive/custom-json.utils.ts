@@ -1,6 +1,6 @@
+import Config from "@configFile";
 import { CustomJsonOperation } from "@hiveio/dhive";
-import Config from "../../config";
-import { KeyType } from "../../interfaces/keys.interface";
+import { KeyType } from "@interfaces/keys.interface";
 
 // const send = async (
 //   json: any,

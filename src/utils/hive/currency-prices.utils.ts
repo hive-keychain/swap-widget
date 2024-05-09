@@ -1,7 +1,7 @@
 // import { LocalStorageKeyEnum } from '@reference-data/local-storage-key.enum';
 // import LocalStorageUtils from 'src/utils/localStorage.utils';
-import { KeychainApi } from "../../api/keychain";
-import Logger from "../../utils/logger.utils";
+import { KeychainApi } from "@api/keychain";
+import Logger from "@utils/logger.utils";
 //TODO cleanup
 const getPrices = async () => {
   let prices;

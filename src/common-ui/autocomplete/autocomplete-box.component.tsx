@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import AutocompleteItemComponent from "src/common-ui/autocomplete/autocomplete-item/autocomplete-item.component";
-import { AutoCompleteUtils } from "src/utils/autocomplete.utils";
 import {
   AutoCompleteValue,
   AutoCompleteValues,
   AutoCompleteValuesType,
-} from "../../interfaces/autocomplete.interface";
+} from "@interfaces/autocomplete.interface";
+import { AutoCompleteUtils } from "@utils/autocomplete.utils";
+import React, { useEffect, useState } from "react";
+import AutocompleteItemComponent from "src/common-ui/autocomplete/autocomplete-item/autocomplete-item.component";
 
 type Props = {
   autoCompleteValues?: AutoCompleteValuesType;

@@ -1,4 +1,4 @@
-import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
+import { SplashscreenComponent } from "@common-ui/splashscreen/splashscreen.component";
 import { TokenSwapsComponent } from "@components/token-swaps/token-swaps.component";
 import { ActiveAccount, RC } from "@interfaces/active-account.interface";
 import { CurrencyPrices } from "@interfaces/bittrex.interface";
@@ -111,11 +111,7 @@ export const App = () => {
 
   return (
     <div className="App">
-      {loading && (
-        <div className="rotating-logo-wrapper">
-          <RotatingLogoComponent />
-        </div>
-      )}
+      {loading && <SplashscreenComponent />}
       {!loading &&
         formParams &&
         Object.keys(formParams).length > 0 &&

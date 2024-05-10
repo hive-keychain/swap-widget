@@ -33,6 +33,10 @@ import ButtonComponent, {
   ButtonType,
 } from "@common-ui/button/button.component";
 import {
+  ConfirmationPageComponent,
+  ConfirmationPageParams,
+} from "@common-ui/confirmation-page/confirmation-page.component";
+import {
   ComplexeCustomSelect,
   OptionItem,
 } from "@common-ui/custom-select/custom-select.component";
@@ -92,6 +96,9 @@ const TokenSwaps = ({
     useState(false);
 
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
+  const [showConfirmationPage, setShowConfirmationPage] = useState(false);
+  const [confirmationPageParams, setConfirmationPageParams] =
+    useState<ConfirmationPageParams>();
 
   const { t } = useTranslation();
 
@@ -391,29 +398,44 @@ const TokenSwaps = ({
     //  1. find a way to render confirmation page. Maybe using "router-component-kidn-of"
     //  2. the afterconfirmation, will try to execute the SDK swap operation, wait for result and present.
 
-    // const startTokenPrecision = await TokensUtils.getTokenPrecision(
-    //   startToken?.value.symbol
-    // );
-    // const endTokenPrecision = await TokensUtils.getTokenPrecision(
-    //   endToken?.value.symbol
-    // );
+    const startTokenPrecision = await TokensUtils.getTokenPrecision(
+      startToken?.value.symbol
+    );
+    const endTokenPrecision = await TokensUtils.getTokenPrecision(
+      endToken?.value.symbol
+    );
 
-    // const fields = [
-    //   { label: "html_popup_swap_swap_id", value: estimateId },
-    //   {
-    //     label: "html_popup_swap_swap_amount",
-    //     value: `${FormatUtils.withCommas(
-    //       Number(amount).toFixed(startTokenPrecision)
-    //     )} ${startToken?.value.symbol} => ${FormatUtils.withCommas(
-    //       estimateValue!.toString()
-    //     )} ${endToken?.value.symbol}`,
-    //   },
-    //   {
-    //     label: "html_popup_swap_swap_slipperage",
-    //     value: `${slippage}% (for each step)`,
-    //   },
-    // ];
+    const fields = [
+      { label: "html_popup_swap_swap_id.message", value: estimateId },
+      {
+        label: "html_popup_swap_swap_amount.message",
+        value: `${FormatUtils.withCommas(
+          Number(amount).toFixed(startTokenPrecision)
+        )} ${startToken?.value.symbol} => ${FormatUtils.withCommas(
+          estimateValue!.toString()
+        )} ${endToken?.value.symbol}`,
+      },
+      {
+        label: "html_popup_swap_swap_slipperage.message",
+        value: `${slippage}% (for each step)`,
+      },
+    ];
 
+    setConfirmationPageParams({
+      fields,
+      message: t("html_popup_swap_token_confirm_message.message"),
+      title: "html_popup_swap_token_confirm_title.message",
+      afterConfirmAction: async () => {
+        console.log("TODO using Keychain SDK swap OP");
+      },
+      afterCancelAction: async () => {
+        await SwapTokenUtils.cancelSwap(estimateId);
+        setShowConfirmationPage(false);
+        setConfirmationPageParams(undefined);
+      },
+      activeAccount,
+      method: null,
+    } as ConfirmationPageParams);
     // navigateToWithParams(Screen.CONFIRMATION_PAGE, {
     //   method: KeychainKeyTypes.active,
     //   message: t("html_popup_swap_token_confirm_message"),
@@ -478,6 +500,13 @@ const TokenSwaps = ({
     // } as ConfirmationPageParams);
   };
 
+  useEffect(() => {
+    if (confirmationPageParams) {
+      console.log({ confirmationPageParams }); //TODO remove line
+      setShowConfirmationPage(true);
+    }
+  }, [confirmationPageParams]);
+
   const getFormParams = () => {
     return {
       startToken: startToken,
@@ -531,193 +560,206 @@ const TokenSwaps = ({
     }
   };
 
-  if (loading)
-    return (
-      <div className="rotating-logo-wrapper">
-        <RotatingLogoComponent />
-      </div>
-    );
-  else if (!startTokenListOptions.length) {
-    return (
-      <div className="token-swaps" aria-label="token-swaps">
-        <div>
-          <div className="caption"> {t("swap_no_token.message")}</div>
-        </div>
-      </div>
-    );
-  } else
-    return (
-      <div className="token-swaps" aria-label="token-swaps">
-        {!loading && !underMaintenance && !serviceUnavailable && (
-          <>
-            <div className="caption">{t("swap_caption.message")}</div>
-
-            <div className="top-row">
-              <div className="fee">
-                {t("swap_caption.message")}: {swapConfig.fee?.amount}%
-              </div>
-              <SVGIcon
-                className="swap-history-button"
-                icon={SVGIcons.SWAPS_HISTORY}
-                //TODO bellow
-                // onClick={() => navigateTo(Screen.TOKENS_SWAP_HISTORY)}
-              />
+  const renderPage = () => {
+    if (!showConfirmationPage) {
+      if (loading)
+        return (
+          <div className="rotating-logo-wrapper">
+            <RotatingLogoComponent />
+          </div>
+        );
+      else if (!startTokenListOptions.length) {
+        return (
+          <div className="token-swaps" aria-label="token-swaps">
+            <div>
+              <div className="caption"> {t("swap_no_token.message")}</div>
             </div>
-            <FormContainer>
-              <div className="form-fields">
-                <div className="start-token">
-                  <div className="inputs">
-                    {startTokenListOptions.length > 0 && startToken && (
-                      <ComplexeCustomSelect
-                        selectedItem={startToken}
-                        options={startTokenListOptions}
-                        setSelectedItem={setStartToken}
-                        label="token"
-                        filterable
-                      />
-                    )}
-                    <InputComponent
-                      type={InputType.NUMBER}
-                      value={amount}
-                      onChange={setAmount}
-                      label="popup_html_transfer_amount"
-                      placeholder="popup_html_transfer_amount"
-                      min={0}
-                      rightActionClicked={() =>
-                        setAmount(startToken?.value.balance)
-                      }
-                      rightActionIcon={SVGIcons.INPUT_MAX}
-                    />
+          </div>
+        );
+      } else
+        return (
+          <div className="token-swaps" aria-label="token-swaps">
+            {!loading && !underMaintenance && !serviceUnavailable && (
+              <>
+                <div className="caption">{t("swap_caption.message")}</div>
+
+                <div className="top-row">
+                  <div className="fee">
+                    {t("swap_caption.message")}: {swapConfig.fee?.amount}%
                   </div>
-                  <span className="available">
-                    {t("popup_html_available.message")} :{" "}
-                    {startToken?.value.balance
-                      ? FormatUtils.withCommas(startToken?.value.balance)
-                      : ""}
-                  </span>
+                  <SVGIcon
+                    className="swap-history-button"
+                    icon={SVGIcons.SWAPS_HISTORY}
+                    //TODO bellow
+                    // onClick={() => navigateTo(Screen.TOKENS_SWAP_HISTORY)}
+                  />
                 </div>
-                <SVGIcon
-                  icon={SVGIcons.SWAPS_SWITCH}
-                  onClick={swapStartAndEnd}
-                  className="swap-icon"
-                />
-                <div className="end-token">
-                  <div className="inputs">
-                    {endTokenListOptions.length > 0 && endToken && (
-                      <ComplexeCustomSelect
-                        selectedItem={endToken}
-                        options={endTokenListOptions}
-                        setSelectedItem={setEndToken}
-                        label="token"
-                        filterable
-                      />
-                    )}
-                    <CustomTooltip
-                      color="grey"
-                      message={getTokenUSDPrice(
-                        estimateValue,
-                        endToken?.value.symbol
-                      )}
-                      position={"top"}
-                      skipTranslation
-                    >
-                      <InputComponent
-                        type={InputType.TEXT}
-                        value={
-                          estimateValue
-                            ? FormatUtils.withCommas(estimateValue!)
-                            : ""
-                        }
-                        disabled
-                        onChange={() => {}}
-                        placeholder="popup_html_transfer_amount"
-                        rightActionIconClassname={
-                          loadingEstimate ? "rotate" : ""
-                        }
-                        rightActionIcon={SVGIcons.SWAPS_ESTIMATE_REFRESH}
-                        rightActionClicked={() => {
-                          if (!estimate) return;
-                          calculateEstimate(
-                            amount,
-                            startToken!,
-                            endToken!,
-                            swapConfig!
-                          );
-                          setAutoRefreshCountdown(
-                            Config.swaps.autoRefreshPeriodSec
-                          );
-                        }}
-                      />
-                    </CustomTooltip>
-                  </div>
-                  <div className="countdown">
-                    {!!autoRefreshCountdown && (
-                      <>
-                        {
-                          <span>
-                            {t("swap_autorefresh.message", {
-                              autoRefreshCountdown,
-                            })}
-                          </span>
-                        }
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className="advanced-parameters">
-                  <div
-                    className="title-panel"
-                    onClick={() =>
-                      setIsAdvancedParametersOpen(!isAdvancedParametersOpen)
-                    }
-                  >
-                    <div className="title">
-                      {t("swap_advanced_parameters.message")}
+                <FormContainer>
+                  <div className="form-fields">
+                    <div className="start-token">
+                      <div className="inputs">
+                        {startTokenListOptions.length > 0 && startToken && (
+                          <ComplexeCustomSelect
+                            selectedItem={startToken}
+                            options={startTokenListOptions}
+                            setSelectedItem={setStartToken}
+                            label="token"
+                            filterable
+                          />
+                        )}
+                        <InputComponent
+                          type={InputType.NUMBER}
+                          value={amount}
+                          onChange={setAmount}
+                          label="popup_html_transfer_amount"
+                          placeholder="popup_html_transfer_amount"
+                          min={0}
+                          rightActionClicked={() =>
+                            setAmount(startToken?.value.balance)
+                          }
+                          rightActionIcon={SVGIcons.INPUT_MAX}
+                        />
+                      </div>
+                      <span className="available">
+                        {t("popup_html_available.message")} :{" "}
+                        {startToken?.value.balance
+                          ? FormatUtils.withCommas(startToken?.value.balance)
+                          : ""}
+                      </span>
                     </div>
                     <SVGIcon
-                      icon={SVGIcons.GLOBAL_ARROW}
-                      onClick={() =>
-                        setIsAdvancedParametersOpen(!isAdvancedParametersOpen)
-                      }
-                      className={`advanced-parameters-toggle ${
-                        isAdvancedParametersOpen ? "open" : "closed"
-                      }`}
+                      icon={SVGIcons.SWAPS_SWITCH}
+                      onClick={swapStartAndEnd}
+                      className="swap-icon"
                     />
-                  </div>
-                  {isAdvancedParametersOpen && (
-                    <div className="advanced-parameters-container">
-                      <InputComponent
-                        type={InputType.NUMBER}
-                        min={5}
-                        step={1}
-                        value={slippage}
-                        onChange={setSlippage}
-                        label="html_popup_swaps_slipperage"
-                        placeholder="html_popup_swaps_slipperage"
-                        // tooltip="html_popup_swaps_slippage_definition"
-                      />
+                    <div className="end-token">
+                      <div className="inputs">
+                        {endTokenListOptions.length > 0 && endToken && (
+                          <ComplexeCustomSelect
+                            selectedItem={endToken}
+                            options={endTokenListOptions}
+                            setSelectedItem={setEndToken}
+                            label="token"
+                            filterable
+                          />
+                        )}
+                        <CustomTooltip
+                          color="grey"
+                          message={getTokenUSDPrice(
+                            estimateValue,
+                            endToken?.value.symbol
+                          )}
+                          position={"top"}
+                          skipTranslation
+                        >
+                          <InputComponent
+                            type={InputType.TEXT}
+                            value={
+                              estimateValue
+                                ? FormatUtils.withCommas(estimateValue!)
+                                : ""
+                            }
+                            disabled
+                            onChange={() => {}}
+                            placeholder="popup_html_transfer_amount"
+                            rightActionIconClassname={
+                              loadingEstimate ? "rotate" : ""
+                            }
+                            rightActionIcon={SVGIcons.SWAPS_ESTIMATE_REFRESH}
+                            rightActionClicked={() => {
+                              if (!estimate) return;
+                              calculateEstimate(
+                                amount,
+                                startToken!,
+                                endToken!,
+                                swapConfig!
+                              );
+                              setAutoRefreshCountdown(
+                                Config.swaps.autoRefreshPeriodSec
+                              );
+                            }}
+                          />
+                        </CustomTooltip>
+                      </div>
+                      <div className="countdown">
+                        {!!autoRefreshCountdown && (
+                          <>
+                            {
+                              <span>
+                                {t("swap_autorefresh.message", {
+                                  autoRefreshCountdown,
+                                })}
+                              </span>
+                            }
+                          </>
+                        )}
+                      </div>
                     </div>
-                  )}
+                    <div className="advanced-parameters">
+                      <div
+                        className="title-panel"
+                        onClick={() =>
+                          setIsAdvancedParametersOpen(!isAdvancedParametersOpen)
+                        }
+                      >
+                        <div className="title">
+                          {t("swap_advanced_parameters.message")}
+                        </div>
+                        <SVGIcon
+                          icon={SVGIcons.GLOBAL_ARROW}
+                          onClick={() =>
+                            setIsAdvancedParametersOpen(
+                              !isAdvancedParametersOpen
+                            )
+                          }
+                          className={`advanced-parameters-toggle ${
+                            isAdvancedParametersOpen ? "open" : "closed"
+                          }`}
+                        />
+                      </div>
+                      {isAdvancedParametersOpen && (
+                        <div className="advanced-parameters-container">
+                          <InputComponent
+                            type={InputType.NUMBER}
+                            min={5}
+                            step={1}
+                            value={slippage}
+                            onChange={setSlippage}
+                            label="html_popup_swaps_slipperage"
+                            placeholder="html_popup_swaps_slipperage"
+                            // tooltip="html_popup_swaps_slippage_definition"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <ButtonComponent
+                    type={ButtonType.IMPORTANT}
+                    label="html_popup_swaps_process_swap"
+                    onClick={processSwap}
+                  />
+                </FormContainer>
+              </>
+            )}
+
+            {underMaintenance && (
+              <div className="maintenance-mode">
+                <SVGIcon icon={SVGIcons.MESSAGE_ERROR} />
+                <div className="text">
+                  {t("swap_under_maintenance.message")}
                 </div>
               </div>
-              <ButtonComponent
-                type={ButtonType.IMPORTANT}
-                label="html_popup_swaps_process_swap"
-                onClick={processSwap}
-              />
-            </FormContainer>
-          </>
-        )}
-
-        {underMaintenance && (
-          <div className="maintenance-mode">
-            <SVGIcon icon={SVGIcons.MESSAGE_ERROR} />
-            <div className="text">{t("swap_under_maintenance.message")}</div>
+            )}
+            {serviceUnavailable && <ServiceUnavailablePage />}
           </div>
-        )}
-        {serviceUnavailable && <ServiceUnavailablePage />}
-      </div>
-    );
+        );
+    } else if (confirmationPageParams && showConfirmationPage) {
+      return <ConfirmationPageComponent {...confirmationPageParams} />;
+    }
+    return null;
+  };
+
+  return renderPage();
 };
 
 export const TokenSwapsComponent = TokenSwaps;

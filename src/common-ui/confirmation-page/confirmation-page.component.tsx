@@ -113,7 +113,6 @@ ConfirmationPageParams) => {
     if (afterCancelAction) {
       afterCancelAction();
     }
-    // goBack();
   };
 
   return (
@@ -129,17 +128,13 @@ ConfirmationPageParams) => {
         {warningMessage && (
           <div data-testid="warning-message" className="warning-message">
             {/* //TODO check bellow how to add warningParams to t */}
-            {skipWarningTranslation
-              ? warningMessage
-              : t(warningMessage + ".message")}
+            {skipWarningTranslation ? warningMessage : t(warningMessage)}
           </div>
         )}
         {willUseMultisig && (
           <div data-testid="use-multisig-message" className="multisig-message">
             <img src="/assets/images/multisig/logo.png" className="logo" />
-            <div className="message">
-              {t("multisig_disclaimer_message.message")}
-            </div>
+            <div className="message">{t("multisig_disclaimer_message")}</div>
           </div>
         )}
         {hasField && (
@@ -147,7 +142,7 @@ ConfirmationPageParams) => {
             {fields.map((field, index) => (
               <React.Fragment key={field.label}>
                 <div className="field">
-                  <div className="label">{t(field.label + ".message")}</div>
+                  <div className="label">{t(field.label)}</div>
                   <div className={`value ${field.valueClassName ?? ""}`}>
                     {field.value}
                   </div>

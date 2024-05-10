@@ -67,7 +67,7 @@ export const App = () => {
     } catch (error) {
       Logger.error("tokensMarket error", (error as any).toString());
     }
-    //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=dec&slipperage=5
+    //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slipperage=5
     let tempFormParams: GenericObjectStringKeyPair = {};
     const currentUrl = window.location.href;
     const searchParams = new URLSearchParams(currentUrl.split("?")[1]);

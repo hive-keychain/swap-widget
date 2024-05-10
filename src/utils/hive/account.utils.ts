@@ -444,25 +444,23 @@ const getAccount = async (username: string): Promise<ExtendedAccount[]> => {
 };
 
 const getRCMana = async (username: string) => {
-  //TODO bellow fix & update
-  // const result = await HiveTxUtils.getData("rc_api.find_rc_accounts", {
-  //   accounts: [username],
-  // });
-  // let manabar = result.rc_accounts[0].rc_manabar;
-  // const max_mana = Number(result.rc_accounts[0].max_rc);
-  // const delta: number = Date.now() / 1000 - manabar.last_update_time;
-  // let current_mana = Number(manabar.current_mana) + (delta * max_mana) / 432000;
-  // let percentage: number = +((current_mana / max_mana) * 100).toFixed(2);
-  // if (!isFinite(percentage) || percentage < 0) {
-  //   percentage = 0;
-  // } else if (percentage > 100) {
-  //   percentage = 100;
-  // }
-  // return {
-  //   ...result.rc_accounts[0],
-  //   percentage: percentage,
-  // };
-  return {};
+  const result = await HiveTxUtils.getData("rc_api.find_rc_accounts", {
+    accounts: [username],
+  });
+  let manabar = result.rc_accounts[0].rc_manabar;
+  const max_mana = Number(result.rc_accounts[0].max_rc);
+  const delta: number = Date.now() / 1000 - manabar.last_update_time;
+  let current_mana = Number(manabar.current_mana) + (delta * max_mana) / 432000;
+  let percentage: number = +((current_mana / max_mana) * 100).toFixed(2);
+  if (!isFinite(percentage) || percentage < 0) {
+    percentage = 0;
+  } else if (percentage > 100) {
+    percentage = 100;
+  }
+  return {
+    ...result.rc_accounts[0],
+    percentage: percentage,
+  };
 };
 
 // const addKeyFromLedger = async (username: string, keys: Keys) => {

@@ -23,7 +23,8 @@
       "@components/*": ["src/components/*"],
       "@common-ui/*": ["src/common-ui/*"],
       "@theme-context": ["src/theme.context.tsx"],
-      "@i18n/*": ["src/i18n/*"]
+      "@i18n/*": ["src/i18n/*"],
+      "@reference-data/*": ["src/reference-data/*"]
     }
   }
 }

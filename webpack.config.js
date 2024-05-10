@@ -73,6 +73,7 @@ module.exports = {
       "@common-ui": path.resolve(__dirname, "src/common-ui/"),
       "@theme-context": path.resolve(__dirname, "src/theme.context.tsx"),
       "@i18n": path.resolve(__dirname, "src/i18n/"),
+      "@reference-data": path.resolve(__dirname, "src/reference-data/"),
     },
   },
   plugins: [

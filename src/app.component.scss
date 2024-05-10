@@ -7,6 +7,22 @@
   overflow: auto;
   margin-left: calc(100vw - 100%);
 
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+    margin-bottom: 8px;
+  }
+
+  .form-container {
+    height: 100%;
+    .caption {
+      @include caption();
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+  }
+
   .page-container {
     display: grid;
     row-gap: 32px;

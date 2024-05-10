@@ -1,4 +1,3 @@
-import { KeychainKeyTypesLC } from "@interfaces/keychain.interface";
 import { SwapConfig } from "@interfaces/swap-token.interface";
 import { Token, TokenMarket } from "@interfaces/tokens.interface";
 // import { loadTokensMarket } from "@popup/hive/actions/token.actions";
@@ -30,7 +29,9 @@ import { SwapTokenUtils } from "@utils/swap-token.utils";
 import { IStep } from "hive-keychain-commons";
 import React, { useEffect, useState } from "react";
 // import "react-tabs/style/react-tabs.scss";
-import { OperationButtonComponent } from "@common-ui/button/operation-button.component";
+import ButtonComponent, {
+  ButtonType,
+} from "@common-ui/button/button.component";
 import {
   ComplexeCustomSelect,
   OptionItem,
@@ -644,10 +645,10 @@ const TokenSwaps = ({
                   )}
                 </div>
               </div>
-              <OperationButtonComponent
-                requiredKey={KeychainKeyTypesLC.active}
+              <ButtonComponent
+                type={ButtonType.IMPORTANT}
+                label="html_popup_swaps_process_swap"
                 onClick={processSwap}
-                label={"html_popup_swaps_process_swap"}
               />
             </FormContainer>
           </>

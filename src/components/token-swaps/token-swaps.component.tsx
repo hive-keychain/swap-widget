@@ -44,6 +44,8 @@ import InputComponent from "@common-ui/input/input.component";
 import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
 import ServiceUnavailablePage from "@common-ui/service-unavailable-page/service-unavailable-page.component";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
+import { Message } from "@interfaces/message.interface";
+import { MessageType } from "@reference-data/message-type.enum";
 import { useTranslation } from "react-i18next";
 import { GenericObjectStringKeyPair } from "src/app";
 
@@ -52,6 +54,7 @@ interface Props {
   tokenMarket: TokenMarket[];
   activeAccount: ActiveAccount;
   formParams: GenericObjectStringKeyPair;
+  setMessage: (value: Message) => void;
 }
 
 const TokenSwaps = ({
@@ -59,6 +62,7 @@ const TokenSwaps = ({
   tokenMarket,
   activeAccount,
   formParams,
+  setMessage,
 }: Props) => {
   const [layerTwoDelayed, setLayerTwoDelayed] = useState(false);
   const [swapConfig, setSwapConfig] = useState({} as SwapConfig);
@@ -145,14 +149,20 @@ const TokenSwaps = ({
       ) {
         setLayerTwoDelayed(true);
         Logger.log("swap_layer_two_delayed");
-        //TODO add message cont and message.
-        // setWarningMessage("swap_layer_two_delayed");
+        setMessage({
+          key: "swap_layer_two_delayed.message",
+          type: MessageType.WARNING,
+        });
       }
       setSlippage(config.slippage.default);
     } catch (err: any) {
       Logger.error(err);
       setServiceUnavailable(true);
-      // setErrorMessage(err.reason?.template, err.reason?.params);
+      setMessage({
+        key: err.reason?.template + ".message",
+        type: MessageType.ERROR,
+        params: err.reason?.params,
+      });
     } finally {
       await tokenInitialization;
       // if (formParams.hasOwnProperty("from")) {
@@ -259,8 +269,10 @@ const TokenSwaps = ({
     swapConfig: SwapConfig
   ) => {
     if (startToken === endToken) {
-      //TODO add messge
-      // setErrorMessage("swap_start_end_token_should_be_different");
+      setMessage({
+        key: "swap_start_end_token_should_be_different.message",
+        type: MessageType.ERROR,
+      });
       return;
     }
 
@@ -294,7 +306,11 @@ const TokenSwaps = ({
       }
     } catch (err: any) {
       setEstimate(undefined);
-      // setErrorMessage(err.reason.template, err.reason.params);
+      setMessage({
+        key: err.reason.template + ".message",
+        type: MessageType.ERROR,
+        params: err.reason.params,
+      });
     } finally {
       setLoadingEstimate(false);
     }
@@ -302,28 +318,41 @@ const TokenSwaps = ({
 
   const processSwap = async () => {
     if (!estimate) {
-      // setErrorMessage("swap_no_estimate_error");
+      setMessage({
+        key: "swap_no_estimate_error.message",
+        type: MessageType.ERROR,
+      });
       return;
     }
     if (slippage < swapConfig.slippage.min) {
-      // setErrorMessage("swap_min_slippage_error", [
-      //   swapConfig.slippage.min.toString(),
-      // ]);
+      setMessage({
+        key: "swap_min_slippage_error.message",
+        type: MessageType.ERROR,
+        params: [swapConfig.slippage.min.toString()],
+      });
       return;
     }
     if (startToken?.value.symbol === endToken?.value.symbol) {
-      // setErrorMessage("swap_start_end_token_should_be_different");
+      setMessage({
+        key: "swap_start_end_token_should_be_different.message",
+        type: MessageType.ERROR,
+      });
       return;
     }
     if (!amount || amount.length === 0) {
-      // setErrorMessage("popup_html_need_positive_amount");
+      setMessage({
+        key: "popup_html_need_positive_amount.message",
+        type: MessageType.ERROR,
+      });
       return;
     }
 
     if (parseFloat(amount) > parseFloat(startToken?.value.balance)) {
-      // setErrorMessage("hive_engine_overdraw_balance_error", [
-      //   startToken?.label!,
-      // ]);
+      setMessage({
+        key: "hive_engine_overdraw_balance_error.message",
+        type: MessageType.ERROR,
+        params: [startToken?.label!],
+      });
       return;
     }
     let estimateId: string;
@@ -337,7 +366,11 @@ const TokenSwaps = ({
         activeAccount.name!
       );
     } catch (err: any) {
-      // setErrorMessage(err.reason.template, err.reason.params);
+      setMessage({
+        key: err.reason.template + ".message",
+        type: MessageType.ERROR,
+        params: err.reason.params,
+      });
       return;
     }
 
@@ -446,7 +479,11 @@ const TokenSwaps = ({
       setStartToken(option);
       setEndToken(tmp);
     } else {
-      // setErrorMessage("swap_cannot_switch_tokens", endToken?.value.symbol);
+      setMessage({
+        key: "swap_cannot_switch_tokens.message",
+        type: MessageType.ERROR,
+        params: endToken?.value.symbol,
+      });
     }
   };
 

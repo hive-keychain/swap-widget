@@ -5,11 +5,13 @@ import { FormContainer } from "@common-ui/form-container/form-container.componen
 import { SVGIcons } from "@common-ui/icons.enum";
 import { InputType } from "@common-ui/input/input-type.enum";
 import InputComponent from "@common-ui/input/input.component";
+import { MessageContainerComponent } from "@common-ui/message-container/message-container.component";
 import { SplashscreenComponent } from "@common-ui/splashscreen/splashscreen.component";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
 import { TokenSwapsComponent } from "@components/token-swaps/token-swaps.component";
 import { ActiveAccount, RC } from "@interfaces/active-account.interface";
 import { CurrencyPrices } from "@interfaces/bittrex.interface";
+import { Message } from "@interfaces/message.interface";
 import { TokenMarket } from "@interfaces/tokens.interface";
 import { DEFAULT_FORM_PARAMS } from "@reference-data/swap-widget";
 import { useThemeContext } from "@theme-context";
@@ -37,6 +39,7 @@ export const App = () => {
   const [tokenMarket, setTokenMarket] = useState<TokenMarket[]>();
   const [usernameNotFound, setUsernameNotFound] = useState(false);
   const [username, setUsername] = useState<string>();
+  const [message, setMessage] = useState<Message>();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -166,8 +169,15 @@ export const App = () => {
             tokenMarket={tokenMarket}
             formParams={formParams}
             activeAccount={activeAccount}
+            setMessage={(message) => setMessage(message)}
           />
         )}
+      {message && (
+        <MessageContainerComponent
+          message={message}
+          onResetMessage={() => setMessage(undefined)}
+        />
+      )}
     </div>
   );
 };

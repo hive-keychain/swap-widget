@@ -21,6 +21,11 @@ const DEFAULT_FORM_PARAMS = {
   slippage: "5",
 };
 
+//TODO important:
+//  -> update all tr keys to use the .message when calling t([key].message), and remove all string you added in all components.
+//  -> if found, move to swap page, if not ask username & show input.
+//  -> when user submit swap, keychain will sign tr using active key and then transmit to BE.
+
 export const App = () => {
   const { theme } = useThemeContext();
   const [loading, setLoading] = useState(true);
@@ -66,6 +71,9 @@ export const App = () => {
         rc: {} as RC,
       });
     } else {
+      //TODO important
+      //  -> present an username input here as mandatory for the next step & remove the set as default.
+      //  -> discuss with team!!
       Logger.log("Account not found in HIVE.", {
         username: tempFormParams.partnerUsername,
       });

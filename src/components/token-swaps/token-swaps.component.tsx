@@ -46,11 +46,6 @@ import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
 import { useTranslation } from "react-i18next";
 import { GenericObjectStringKeyPair } from "src/app";
 
-//TODO important:
-//  -> an input for username.
-//  -> if found, allow swap, if not ask username.
-//  -> when user submit swap, keychain will sign tr using active key and then transmit to BE.
-
 interface Props {
   price: CurrencyPrices;
   tokenMarket: TokenMarket[];
@@ -504,7 +499,7 @@ const TokenSwaps = ({
 
             <div className="top-row">
               <div className="fee">
-                {t("swap_caption,message")}: {swapConfig.fee?.amount}%
+                {t("swap_caption.message")}: {swapConfig.fee?.amount}%
               </div>
               <SVGIcon
                 className="swap-history-button"

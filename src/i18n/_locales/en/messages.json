@@ -3720,7 +3720,7 @@
     "description": "General service unavailable page message"
   },
   "swap_autorefresh": {
-    "message": "Refreshing in $1s",
+    "message": "Refreshing in {{autoRefreshCountdown}}s",
     "description": "Swap autorefresh"
   },
   "swap_transfer_not_sent": {

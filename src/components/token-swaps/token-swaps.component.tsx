@@ -27,7 +27,7 @@ import FormatUtils from "@utils/format.utils";
 import Logger from "@utils/logger.utils";
 import { SwapTokenUtils } from "@utils/swap-token.utils";
 import { IStep } from "hive-keychain-commons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 // import "react-tabs/style/react-tabs.scss";
 import ButtonComponent, {
   ButtonType,
@@ -46,6 +46,7 @@ import ServiceUnavailablePage from "@common-ui/service-unavailable-page/service-
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
 import { Message } from "@interfaces/message.interface";
 import { MessageType } from "@reference-data/message-type.enum";
+import { ThrottleSettings, throttle } from "lodash";
 import { useTranslation } from "react-i18next";
 import { GenericObjectStringKeyPair } from "src/app";
 
@@ -95,39 +96,36 @@ const TokenSwaps = ({
   const { t } = useTranslation();
 
   //TODO remove hook bellow
-  useEffect(() => {
-    init();
-    console.log({ activeAccount, price, tokenMarket });
-  }, []);
-
-  // //TODO uncomment & adjust block
-  // //start block
-  // const throttledRefresh = useMemo(() => {
-  //   return throttle(
-  //     (newAmount, newEndToken, newStartToken, swapConfig) => {
-  //       if (parseFloat(newAmount) > 0 && newEndToken && newStartToken) {
-  //         calculateEstimate(newAmount, newStartToken, newEndToken, swapConfig);
-  //         setAutoRefreshCountdown(Config.swaps.autoRefreshPeriodSec);
-  //       }
-  //     },
-  //     1000,
-  //     { leading: false } as ThrottleSettings
-  //   );
-  // }, []);
-  // useEffect(() => {
-  //   throttledRefresh(amount, endToken, startToken, swapConfig);
-  // }, [amount, endToken, startToken, swapConfig]);
   // useEffect(() => {
   //   init();
-  //   // setTitleContainerProperties({
-  //   //   title: "popup_html_token_swaps",
-  //   //   isBackButtonEnabled: true,
-  //   // });
-  //   return () => {
-  //     throttledRefresh.cancel();
-  //   };
+  //   console.log({ activeAccount, price, tokenMarket, formParams });
   // }, []);
-  // //end block
+
+  const throttledRefresh = useMemo(() => {
+    return throttle(
+      (newAmount, newEndToken, newStartToken, swapConfig) => {
+        if (parseFloat(newAmount) > 0 && newEndToken && newStartToken) {
+          calculateEstimate(newAmount, newStartToken, newEndToken, swapConfig);
+          setAutoRefreshCountdown(Config.swaps.autoRefreshPeriodSec);
+        }
+      },
+      1000,
+      { leading: false } as ThrottleSettings
+    );
+  }, []);
+  useEffect(() => {
+    throttledRefresh(amount, endToken, startToken, swapConfig);
+  }, [amount, endToken, startToken, swapConfig]);
+  useEffect(() => {
+    init();
+    // setTitleContainerProperties({
+    //   title: "popup_html_token_swaps",
+    //   isBackButtonEnabled: true,
+    // });
+    return () => {
+      throttledRefresh.cancel();
+    };
+  }, []);
 
   const init = async () => {
     let tokenInitialization;
@@ -165,22 +163,38 @@ const TokenSwaps = ({
       });
     } finally {
       await tokenInitialization;
-      // if (formParams.hasOwnProperty("from")) {
-      //   setStartToken(formParams.from);
-      // }
-      // if (formParams.endToken) {
-      //   setEndToken(formParams.endToken);
-      // }
-      // if (formParams.amount) {
-      //   setAmount(formParams.amount);
-      // }
-      // if (formParams.slipperage) {
-      //   setSlippage(formParams.slipperage);
-      // }
-
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (
+      startTokenListOptions.length &&
+      endTokenListOptions.length &&
+      formParams
+    ) {
+      if (formParams) {
+        if (formParams.hasOwnProperty("from")) {
+          const foundStartToken = startTokenListOptions.find(
+            (i) => i.label.toLowerCase() === formParams.from.toLowerCase()
+          );
+          if (foundStartToken) setStartToken(foundStartToken);
+        }
+        if (formParams.hasOwnProperty("to")) {
+          const foundEndToken = endTokenListOptions.find(
+            (i) => i.label.toLowerCase() === formParams.to.toLowerCase()
+          );
+          if (foundEndToken) setEndToken(foundEndToken);
+        }
+        if (formParams.hasOwnProperty("amount")) {
+          setAmount(formParams.amount);
+        }
+        if (formParams.hasOwnProperty("slipperage")) {
+          setSlippage(parseFloat(formParams.slipperage));
+        }
+      }
+    }
+  }, [startTokenListOptions, endTokenListOptions]);
 
   useEffect(() => {
     if (autoRefreshCountdown === null) {
@@ -290,17 +304,16 @@ const TokenSwaps = ({
       );
 
       if (result.length) {
-        //TODO bellow
-        // const precision = await TokensUtils.getTokenPrecision(
-        //   result[result.length - 1].endToken
-        // );
-        // const value = Number(result[result.length - 1].estimate);
-        // const fee =
-        //   (Number(result[result.length - 1].estimate) * swapConfig.fee.amount) /
-        //   100;
-        // const finalValue = Number(value - fee).toFixed(precision);
-        // setEstimate(result);
-        // setEstimateValue(finalValue);
+        const precision = await TokensUtils.getTokenPrecision(
+          result[result.length - 1].endToken
+        );
+        const value = Number(result[result.length - 1].estimate);
+        const fee =
+          (Number(result[result.length - 1].estimate) * swapConfig.fee.amount) /
+          100;
+        const finalValue = Number(value - fee).toFixed(precision);
+        setEstimate(result);
+        setEstimateValue(finalValue);
       } else {
         setEstimateValue(undefined);
       }
@@ -373,6 +386,10 @@ const TokenSwaps = ({
       });
       return;
     }
+
+    //TODO bellow important
+    //  1. find a way to render confirmation page. Maybe using "router-component-kidn-of"
+    //  2. the afterconfirmation, will try to execute the SDK swap operation, wait for result and present.
 
     // const startTokenPrecision = await TokensUtils.getTokenPrecision(
     //   startToken?.value.symbol
@@ -638,8 +655,9 @@ const TokenSwaps = ({
                       <>
                         {
                           <span>
-                            {/* //TODO check how to add params. autoRefreshCountdown */}
-                            {t("swap_autorefresh.message")}
+                            {t("swap_autorefresh.message", {
+                              autoRefreshCountdown,
+                            })}
                           </span>
                         }
                       </>

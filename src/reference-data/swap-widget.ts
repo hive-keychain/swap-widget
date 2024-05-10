@@ -1,6 +1,6 @@
 export const DEFAULT_FORM_PARAMS = {
-  partnerUsername: "keychain.tests",
+  partnerUsername: "",
   from: "hbd",
   to: "hive",
-  slippage: "5",
+  slipperage: "5",
 };

@@ -7,6 +7,7 @@ import ButtonComponent, {
   ButtonType,
 } from "@common-ui/button/button.component";
 import { ConfirmationPageFields } from "@common-ui/confirmation-page/confirmation-field.interface";
+import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
 import { Separator } from "@common-ui/separator/separator.component";
 import { ActiveAccount } from "@interfaces/active-account.interface";
 import { KeychainKeyTypes } from "hive-keychain-commons";
@@ -40,30 +41,13 @@ const ConfirmationPage = ({
   skipTitleTranslation,
   activeAccount,
   method,
-}: // goBack,
-// setTitleContainerProperties,
-// addCaptionToLoading,
-ConfirmationPageParams) => {
+  formParams,
+}: ConfirmationPageParams) => {
   const { t } = useTranslation();
   const [willUseMultisig, setWillUseMultisig] = useState<boolean>();
+  const [waitingForKeychain, setWaitingForKeychain] = useState(false);
   const [hasField] = useState(fields && fields.length !== 0);
   useEffect(() => {
-    // setTitleContainerProperties({
-    //   title: title ?? 'popup_html_confirm',
-    //   skipTitleTranslation,
-    //   isBackButtonEnabled: true,
-    //   onBackAdditional: () => {
-    //     if (afterCancelAction) {
-    //       afterCancelAction();
-    //     }
-    //   },
-    //   onCloseAdditional: () => {
-    //     if (afterCancelAction) {
-    //       afterCancelAction();
-    //     }
-    //   },
-    // });
-
     checkForMultsig();
   }, []);
 
@@ -102,10 +86,7 @@ ConfirmationPageParams) => {
   };
 
   const handleClickOnConfirm = () => {
-    // AnalyticsUtils.sendRequestEvent(title);
-    // if (willUseMultisig) {
-    //   addCaptionToLoading('multisig_transmitting_to_multisig');
-    // }
+    setWaitingForKeychain(true);
     afterConfirmAction();
   };
 
@@ -113,9 +94,10 @@ ConfirmationPageParams) => {
     if (afterCancelAction) {
       afterCancelAction();
     }
+    setWaitingForKeychain(false);
   };
 
-  return (
+  return !waitingForKeychain ? (
     <div className="confirmation-page">
       <div className="confirmation-top">
         <div
@@ -178,31 +160,11 @@ ConfirmationPageParams) => {
         ></ButtonComponent>
       </div>
     </div>
+  ) : (
+    <div className="rotating-logo-wrapper">
+      <RotatingLogoComponent />
+    </div>
   );
 };
-
-// const mapStateToProps = (state: RootState) => {
-//   return {
-//     message: state.navigation.stack[0].params.message as string,
-//     fields: state.navigation.stack[0].params.fields as ConfirmationPageFields[],
-//     warningMessage: state.navigation.stack[0].params.warningMessage as string,
-//     warningParams: state.navigation.stack[0].params.warningParams,
-//     skipWarningTranslation:
-//       state.navigation.stack[0].params.skipWarningTranslation,
-//     afterConfirmAction: state.navigation.stack[0].params.afterConfirmAction,
-//     afterCancelAction: state.navigation.stack[0].params.afterCancelAction,
-//     title: state.navigation.stack[0].params.title,
-//     skipTitleTranslation: state.navigation.stack[0].params.skipTitleTranslation,
-//     method: state.navigation.stack[0].params.method as KeychainKeyTypes,
-//     activeAccount: state.hive.activeAccount,
-//   };
-// };
-
-// const connector = connect(mapStateToProps, {
-//   goBack,
-//   setTitleContainerProperties,
-//   addCaptionToLoading,
-// });
-// type PropsType = ConnectedProps<typeof connector> & ConfirmationPageParams;
 
 export const ConfirmationPageComponent = ConfirmationPage;

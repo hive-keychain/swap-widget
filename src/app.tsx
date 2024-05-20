@@ -22,7 +22,9 @@ export interface GenericObjectStringKeyPair {
 }
 
 //TODO important:
-//  -> when user submit swap, keychain will sign tr using active key and then transmit to BE.
+//  -> create a new local project that uses the iframe, test + add width.
+//    -> ask the team how they want to handle the styles(width/height)
+//  -> after all good and working, add this to the playground.
 
 export const App = () => {
   const { theme } = useThemeContext();

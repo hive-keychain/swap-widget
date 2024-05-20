@@ -50,6 +50,7 @@ import ServiceUnavailablePage from "@common-ui/service-unavailable-page/service-
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
 import { Message } from "@interfaces/message.interface";
 import { MessageType } from "@reference-data/message-type.enum";
+import { KeychainSDK } from "keychain-sdk";
 import { ThrottleSettings, throttle } from "lodash";
 import { useTranslation } from "react-i18next";
 import { GenericObjectStringKeyPair } from "src/app";
@@ -101,12 +102,6 @@ const TokenSwaps = ({
     useState<ConfirmationPageParams>();
 
   const { t } = useTranslation();
-
-  //TODO remove hook bellow
-  // useEffect(() => {
-  //   init();
-  //   console.log({ activeAccount, price, tokenMarket, formParams });
-  // }, []);
 
   const throttledRefresh = useMemo(() => {
     return throttle(
@@ -197,7 +192,7 @@ const TokenSwaps = ({
           setAmount(formParams.amount);
         }
         if (formParams.hasOwnProperty("slipperage")) {
-          setSlippage(parseFloat(formParams.slipperage));
+          setSlippage(Number(formParams.slipperage));
         }
       }
     }
@@ -275,7 +270,6 @@ const TokenSwaps = ({
           };
         }),
     ];
-    // const lastUsed = await SwapTokenUtils.getLastUsed();
     setStartToken(list[0]);
     setStartTokenListOptions(list);
     const endTokenToSet = endList[1];
@@ -334,6 +328,12 @@ const TokenSwaps = ({
     } finally {
       setLoadingEstimate(false);
     }
+  };
+
+  const goBack = async (estimateId: string) => {
+    await SwapTokenUtils.cancelSwap(estimateId);
+    setShowConfirmationPage(false);
+    setConfirmationPageParams(undefined);
   };
 
   const processSwap = async () => {
@@ -420,89 +420,45 @@ const TokenSwaps = ({
         value: `${slippage}% (for each step)`,
       },
     ];
-
     setConfirmationPageParams({
       fields,
       message: t("html_popup_swap_token_confirm_message.message"),
       title: "html_popup_swap_token_confirm_title.message",
+      formParams: getFormParams(),
       afterConfirmAction: async () => {
-        console.log("TODO using Keychain SDK swap OP");
+        const keychain = new KeychainSDK(window);
+        try {
+          const swapMessage: any = await keychain.swap.start({
+            username: getFormParams().username,
+            startToken: getFormParams().startToken!.value.symbol,
+            endToken: getFormParams().endToken!.value.symbol,
+            amount: Number(getFormParams().amount),
+            slippage: getFormParams().slipperage,
+            steps: estimate,
+          });
+          console.log({ swapMessage });
+          if (swapMessage.success) {
+            setMessage({
+              type: MessageType.SUCCESS,
+              key: "html_popup_swap_token_success_message.message",
+            });
+          }
+        } catch (error) {
+          Logger.log({ error });
+        } finally {
+          await goBack(estimateId);
+        }
       },
       afterCancelAction: async () => {
-        await SwapTokenUtils.cancelSwap(estimateId);
-        setShowConfirmationPage(false);
-        setConfirmationPageParams(undefined);
+        await goBack(estimateId);
       },
       activeAccount,
       method: null,
     } as ConfirmationPageParams);
-    // navigateToWithParams(Screen.CONFIRMATION_PAGE, {
-    //   method: KeychainKeyTypes.active,
-    //   message: t("html_popup_swap_token_confirm_message"),
-    //   fields: fields,
-    //   title: "html_popup_swap_token_confirm_title",
-    //   formParams: getFormParams(),
-    //   afterConfirmAction: async () => {
-    //     addToLoadingList(
-    //       "html_popup_swap_sending_token_to_swap_account",
-    //       KeysUtils.getKeyType(
-    //         activeAccount.keys.active!,
-    //         activeAccount.keys.activePubkey!,
-    //         activeAccount.account,
-    //         activeAccount.account
-    //       ),
-    //       [startToken?.value.symbol, swapConfig.account]
-    //     );
-    //     try {
-    //       let success;
-
-    //       success = await SwapTokenUtils.processSwap(
-    //         estimateId,
-    //         startToken?.value.symbol,
-    //         parseFloat(amount),
-    //         activeAccount,
-    //         swapConfig.account
-    //       );
-
-    //       removeFromLoadingList(
-    //         "html_popup_swap_sending_token_to_swap_account"
-    //       );
-
-    //       if (success && success.isUsingMultisig) {
-    //         await SwapTokenUtils.saveLastUsed(
-    //           startToken?.value,
-    //           endToken?.value
-    //         );
-    //         setSuccessMessage("swap_multisig_transaction_sent_to_signers");
-    //         goBackToThenNavigate(Screen.TOKENS_SWAP_HISTORY);
-    //       } else if (success && success.tx_id) {
-    //         await SwapTokenUtils.saveLastUsed(
-    //           startToken?.value,
-    //           endToken?.value
-    //         );
-    //         await SwapTokenUtils.setAsInitiated(estimateId);
-    //         setSuccessMessage("html_popup_swap_sending_token_successful");
-    //         goBackToThenNavigate(Screen.TOKENS_SWAP_HISTORY);
-    //       } else {
-    //         setErrorMessage("html_popup_swap_error_sending_token", [
-    //           swapConfig.account,
-    //         ]);
-    //       }
-    //     } catch (err: any) {
-    //       setErrorMessage(err.message);
-    //     } finally {
-    //       removeFromLoadingList("html_popup_delegate_rc_operation");
-    //     }
-    //   },
-    //   afterCancelAction: async () => {
-    //     await SwapTokenUtils.cancelSwap(estimateId);
-    //   },
-    // } as ConfirmationPageParams);
   };
 
   useEffect(() => {
     if (confirmationPageParams) {
-      console.log({ confirmationPageParams }); //TODO remove line
       setShowConfirmationPage(true);
     }
   }, [confirmationPageParams]);
@@ -512,7 +468,8 @@ const TokenSwaps = ({
       startToken: startToken,
       endToken: endToken,
       amount: amount,
-      slipperage: slippage,
+      slipperage: Number(slippage),
+      username: activeAccount.name!,
     };
   };
 
@@ -581,20 +538,6 @@ const TokenSwaps = ({
           <div className="token-swaps" aria-label="token-swaps">
             {!loading && !underMaintenance && !serviceUnavailable && (
               <>
-                {/* //TODO bellow cleanup after finishing */}
-                {/* <div className="caption">{t("swap_caption.message")}</div>
-
-                <div className="top-row">
-                  <div className="fee">
-                    {t("swap_caption.message")}: {swapConfig.fee?.amount}%
-                  </div>
-                  <SVGIcon
-                    className="swap-history-button"
-                    icon={SVGIcons.SWAPS_HISTORY}
-                    //TODO bellow
-                    // onClick={() => navigateTo(Screen.TOKENS_SWAP_HISTORY)}
-                  />
-                </div> */}
                 <FormContainer>
                   <div className="form-fields">
                     <div className="start-token">

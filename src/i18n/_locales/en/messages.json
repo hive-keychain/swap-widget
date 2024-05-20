@@ -3560,7 +3560,11 @@
     "description": "Confirm token swap"
   },
   "html_popup_swap_token_confirm_message": {
-    "message": "You are about to initiate a token swap using Keychain. You can track its status from the swap history screen.",
+    "message": "You are about to initiate a token swap using Keychain. You can track its status from the swap history screen in the extension.",
+    "description": "confirm token swap message"
+  },
+  "html_popup_swap_token_success_message": {
+    "message": "Swap initiated! You can track its status from the swap history screen in the extension.",
     "description": "confirm token swap message"
   },
   "html_popup_swap_swap_id": {

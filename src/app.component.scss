@@ -1,11 +1,17 @@
 @import "./components/swaps.module.scss";
 
 .App {
-  height: 600px;
+  display: flex;
+  width: 435px;
+  height: 100%;
   color: white;
   box-sizing: border-box;
   overflow: auto;
-  margin-left: calc(100vw - 100%);
+  justify-content: center;
+
+  .missing-param-logo {
+    align-self: center;
+  }
 
   .logo-container {
     display: flex;

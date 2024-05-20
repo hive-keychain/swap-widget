@@ -3679,6 +3679,10 @@
     "message": "In order to proceed with the swap, please input a valid HIVE username.",
     "description": "Caption"
   },
+  "swap_widget_missing_param": {
+    "message": "There is missing param in this request. Please contact development support!",
+    "description": "Caption"
+  },
   "swap_no_token": {
     "message": "You don't have any HIVE, HBD or Hive-Engine token to swap at the moment.",
     "description": "Caption"

@@ -581,7 +581,8 @@ const TokenSwaps = ({
           <div className="token-swaps" aria-label="token-swaps">
             {!loading && !underMaintenance && !serviceUnavailable && (
               <>
-                <div className="caption">{t("swap_caption.message")}</div>
+                {/* //TODO bellow cleanup after finishing */}
+                {/* <div className="caption">{t("swap_caption.message")}</div>
 
                 <div className="top-row">
                   <div className="fee">
@@ -593,7 +594,7 @@ const TokenSwaps = ({
                     //TODO bellow
                     // onClick={() => navigateTo(Screen.TOKENS_SWAP_HISTORY)}
                   />
-                </div>
+                </div> */}
                 <FormContainer>
                   <div className="form-fields">
                     <div className="start-token">

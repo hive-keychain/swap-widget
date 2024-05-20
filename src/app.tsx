@@ -1,10 +1,4 @@
-import ButtonComponent, {
-  ButtonType,
-} from "@common-ui/button/button.component";
-import { FormContainer } from "@common-ui/form-container/form-container.component";
 import { SVGIcons } from "@common-ui/icons.enum";
-import { InputType } from "@common-ui/input/input-type.enum";
-import InputComponent from "@common-ui/input/input.component";
 import { MessageContainerComponent } from "@common-ui/message-container/message-container.component";
 import { SplashscreenComponent } from "@common-ui/splashscreen/splashscreen.component";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
@@ -13,6 +7,7 @@ import { ActiveAccount, RC } from "@interfaces/active-account.interface";
 import { CurrencyPrices } from "@interfaces/bittrex.interface";
 import { Message } from "@interfaces/message.interface";
 import { TokenMarket } from "@interfaces/tokens.interface";
+import { MessageType } from "@reference-data/message-type.enum";
 import { DEFAULT_FORM_PARAMS } from "@reference-data/swap-widget";
 import { useThemeContext } from "@theme-context";
 import AccountUtils from "@utils/hive/account.utils";
@@ -31,6 +26,7 @@ export interface GenericObjectStringKeyPair {
 
 export const App = () => {
   const { theme } = useThemeContext();
+  const [missingParams, setMissingParams] = useState(false);
   const [loading, setLoading] = useState(true);
   const [formParams, setFormParams] =
     useState<GenericObjectStringKeyPair>(DEFAULT_FORM_PARAMS);
@@ -79,10 +75,16 @@ export const App = () => {
       }
       setFormParams(tempFormParams);
     } else {
-      Logger.log("Empty Username!");
-      setUsernameNotFound(true);
+      Logger.log("Missing URL params!");
+      //TODO cleanup
+      // setUsernameNotFound(true);
       setTimeout(() => {
         setLoading(false);
+        setMessage({
+          type: MessageType.ERROR,
+          key: "swap_widget_missing_param.message",
+        });
+        setMissingParams(true);
       }, 1000);
       return;
     }
@@ -98,35 +100,41 @@ export const App = () => {
         )) as RC,
       });
     } else {
-      Logger.log("Account not found in HIVE.", {
+      Logger.log("Account not found in HIVE. Missing param", {
         username: tempFormParams.partnerUsername,
       });
-      setUsernameNotFound(true);
+      // setUsernameNotFound(true);
+      setMessage({
+        type: MessageType.ERROR,
+        key: "swap_widget_missing_param.message",
+      });
+      setMissingParams(true);
     }
     setLoading(false);
   };
 
-  const checkUsername = async () => {
-    if (username && username.trim().length > 3) {
-      if (await AccountUtils.doesAccountExist(username)) {
-        setActiveAccount({
-          name: username,
-          account: await AccountUtils.getExtendedAccount(username),
-          keys: {},
-          rc: await AccountUtils.getRCMana(username),
-        });
-        setFormParams((prevForm) => {
-          return { ...prevForm, partnerUsername: username };
-        });
-        setUsernameNotFound(false);
-      }
-    }
-  };
+  //TODO cleanup
+  // const checkUsername = async () => {
+  //   if (username && username.trim().length > 3) {
+  //     if (await AccountUtils.doesAccountExist(username)) {
+  //       setActiveAccount({
+  //         name: username,
+  //         account: await AccountUtils.getExtendedAccount(username),
+  //         keys: {},
+  //         rc: await AccountUtils.getRCMana(username),
+  //       });
+  //       setFormParams((prevForm) => {
+  //         return { ...prevForm, partnerUsername: username };
+  //       });
+  //       setUsernameNotFound(false);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="App">
       {loading && <SplashscreenComponent />}
-      {!loading && usernameNotFound && formParams && (
+      {/* {!loading && usernameNotFound && formParams && (
         <>
           <div className="logo-container">
             <SVGIcon
@@ -156,14 +164,14 @@ export const App = () => {
             </div>
           </FormContainer>
         </>
-      )}
+      )} */}
       {!loading &&
         formParams &&
         Object.keys(formParams).length > 0 &&
         prices &&
         tokenMarket &&
         activeAccount &&
-        !usernameNotFound && (
+        !missingParams && (
           <TokenSwapsComponent
             price={prices}
             tokenMarket={tokenMarket}
@@ -176,6 +184,12 @@ export const App = () => {
         <MessageContainerComponent
           message={message}
           onResetMessage={() => setMessage(undefined)}
+        />
+      )}
+      {!loading && missingParams && (
+        <SVGIcon
+          className="missing-param-logo"
+          icon={SVGIcons.KEYCHAIN_LOGO_SPLASHSCREEN}
         />
       )}
     </div>

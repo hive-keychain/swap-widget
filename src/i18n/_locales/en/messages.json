@@ -3451,6 +3451,10 @@
     "message": "Swap",
     "description": "Token swaps : process"
   },
+  "html_popup_swaps_documentation_message": {
+    "message": "Please check our Playground to learn how to properly use it. <a target='__blank' href='https://hive-keychain.com/#/terms'>//TODO add link to playground</a>",
+    "description": "swap widget: wrong partner username param"
+  },
   "html_popup_swaps_final_price": {
     "message": "≈ $1 $2",
     "description": "Token swaps : process"

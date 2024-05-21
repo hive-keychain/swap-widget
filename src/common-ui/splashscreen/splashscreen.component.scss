@@ -27,7 +27,7 @@
       height: 100%;
       position: fixed;
       background-image: var(--background);
-      background-repeat: no-repeat;
+      background-repeat: repeat-x;
       // opacity: 0.4;
       &.top {
         background-position-y: -44%;

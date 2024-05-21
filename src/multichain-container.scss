@@ -5,7 +5,8 @@
 // @import './pages/chain-selector/chain-selector.component.scss';
 
 .theme {
-  height: 100%;
+  display: flex;
+  flex: 1;
   &.light {
     @include spread-map($light);
   }

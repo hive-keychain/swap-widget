@@ -9,7 +9,6 @@ import { Message } from "@interfaces/message.interface";
 import { TokenMarket } from "@interfaces/tokens.interface";
 import { MessageType } from "@reference-data/message-type.enum";
 import { DEFAULT_FORM_PARAMS } from "@reference-data/swap-widget";
-import { useThemeContext } from "@theme-context";
 import AccountUtils from "@utils/hive/account.utils";
 import CurrencyPricesUtils from "@utils/hive/currency-prices.utils";
 import TokensUtils from "@utils/hive/tokens.utils";
@@ -28,7 +27,6 @@ export interface GenericObjectStringKeyPair {
 //  -> after all good and working, add this to the playground.
 
 export const App = () => {
-  const { theme } = useThemeContext();
   const [missingParams, setMissingParams] = useState(false);
   const [loading, setLoading] = useState(true);
   const [formParams, setFormParams] =
@@ -36,8 +34,6 @@ export const App = () => {
   const [activeAccount, setActiveAccount] = useState<ActiveAccount>();
   const [prices, setPrices] = useState<CurrencyPrices>();
   const [tokenMarket, setTokenMarket] = useState<TokenMarket[]>();
-  const [usernameNotFound, setUsernameNotFound] = useState(false);
-  const [username, setUsername] = useState<string>();
   const [message, setMessage] = useState<Message>();
   const { t } = useTranslation();
 
@@ -158,10 +154,18 @@ export const App = () => {
         />
       )}
       {!loading && missingParams && (
-        <SVGIcon
-          className="missing-param-logo"
-          icon={SVGIcons.KEYCHAIN_LOGO_SPLASHSCREEN}
-        />
+        <div className="missing-param-container">
+          <SVGIcon
+            className="missing-param-logo"
+            icon={SVGIcons.KEYCHAIN_LOGO_SPLASHSCREEN}
+          />
+          <div
+            className="caption-link"
+            dangerouslySetInnerHTML={{
+              __html: t("html_popup_swaps_documentation_message.message"),
+            }}
+          ></div>
+        </div>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 @mixin background {
   background-image: var(--background);
-  background-repeat: no-repeat;
+  background-repeat: repeat-x;
 }
 
 @mixin background-bottom {

@@ -60,7 +60,6 @@
 
     .ball {
       display: flex;
-      // margin: 1.5em;
       width: 1em;
       height: 1em;
       background: var(--splashscreen-text-color);
@@ -70,6 +69,22 @@
       &.third {
         animation-delay: 0.2s;
       }
+    }
+  }
+
+  @media only screen and (max-device-width: 300px) {
+    .loading-animation-container {
+      width: calc(65%);
+    }
+    .logo,
+    svg {
+      width: calc(95%);
+    }
+    .first,
+    .second,
+    .third {
+      width: 0.5em !important;
+      height: 0.5em !important;
     }
   }
 }

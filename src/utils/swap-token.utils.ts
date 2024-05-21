@@ -10,6 +10,8 @@ import TransferUtils from "@utils/hive/transfer.utils";
 import FormatUtils from "@utils/format.utils";
 import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
 // import LocalStorageUtils from 'src/utils/localStorage.utils';
+import { LocalStorageKeyEnum } from "@reference-data/local-storage-key.enum";
+import { LocalStorageUtils } from "@utils/local-storage.utils";
 import Logger from "@utils/logger.utils";
 
 //TODO cleanup code & ask about localStorage???
@@ -166,19 +168,18 @@ const getConfig = async (): Promise<SwapConfig> => {
   return res.result;
 };
 
-const saveLastUsed = async (from: string, to: string) => {
-  // await LocalStorageUtils.saveValueInLocalStorage(
-  //   LocalStorageKeyEnum.SWAP_LAST_USED_TOKENS,
-  //   { from, to },
-  // );
+const saveLastUsed = (from: string, to: string) => {
+  LocalStorageUtils.saveValueInLocalStorage(
+    LocalStorageKeyEnum.SWAP_LAST_USED_TOKENS,
+    { from, to }
+  );
 };
-const getLastUsed = async () => {
-  // const lastUsed = await LocalStorageUtils.getValueFromLocalStorage(
-  //   LocalStorageKeyEnum.SWAP_LAST_USED_TOKENS,
-  // );
-  // if (!lastUsed) return { from: null, to: null };
-  // else return lastUsed;
-  return { from: null, to: null };
+const getLastUsed = () => {
+  const lastUsed = LocalStorageUtils.getValueFromLocalStorage(
+    LocalStorageKeyEnum.SWAP_LAST_USED_TOKENS
+  );
+  if (!lastUsed) return { from: null, to: null };
+  else return lastUsed;
 };
 
 const setAsInitiated = async (swapId: ISwap["id"]) => {

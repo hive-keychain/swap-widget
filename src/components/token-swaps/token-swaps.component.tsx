@@ -120,10 +120,6 @@ const TokenSwaps = ({
   }, [amount, endToken, startToken, swapConfig]);
   useEffect(() => {
     init();
-    // setTitleContainerProperties({
-    //   title: "popup_html_token_swaps",
-    //   isBackButtonEnabled: true,
-    // });
     return () => {
       throttledRefresh.cancel();
     };
@@ -132,7 +128,6 @@ const TokenSwaps = ({
   const init = async () => {
     let tokenInitialization;
     try {
-      // if (!tokenMarket.length) loadTokensMarket();
       setLoading(true);
       tokenInitialization = initTokenSelectOptions();
       const [serverStatus, config] = await Promise.all([
@@ -270,9 +265,16 @@ const TokenSwaps = ({
           };
         }),
     ];
-    setStartToken(list[0]);
+    const lastUsed = SwapTokenUtils.getLastUsed();
+    setStartToken(
+      lastUsed.from
+        ? list.find((t) => t.value.symbol === lastUsed.from.symbol)
+        : list[0]
+    );
     setStartTokenListOptions(list);
-    const endTokenToSet = endList[1];
+    const endTokenToSet = lastUsed.to
+      ? endList.find((t) => t.value.symbol === lastUsed.to.symbol)
+      : endList[0];
     setEndToken(endTokenToSet);
     setEndTokenListOptions(endList);
   };
@@ -438,6 +440,7 @@ const TokenSwaps = ({
           });
           console.log({ swapMessage });
           if (swapMessage.success) {
+            SwapTokenUtils.saveLastUsed(startToken?.value, endToken?.value);
             setMessage({
               type: MessageType.SUCCESS,
               key: "html_popup_swap_token_success_message.message",

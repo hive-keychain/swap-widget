@@ -3684,7 +3684,7 @@
     "description": "Caption"
   },
   "swap_widget_missing_param": {
-    "message": "There is missing param in this request. Please contact development support!",
+    "message": "PartnerUsername is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
     "description": "Caption"
   },
   "swap_no_token": {

@@ -14,6 +14,7 @@ import AccountUtils from "@utils/hive/account.utils";
 import CurrencyPricesUtils from "@utils/hive/currency-prices.utils";
 import TokensUtils from "@utils/hive/tokens.utils";
 import Logger from "@utils/logger.utils";
+import { SwapTokenUtils } from "@utils/swap-token.utils";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -44,6 +45,19 @@ export const App = () => {
     init();
   }, []);
 
+  //TODO
+  //  - no confirmation page in widget.
+  //  - show live status in widget of this trade. After finishing goes back initial page.
+  //    -> "/token-swap/:id",
+  //  - reload balances.
+  //  - pass the width as url param
+  //  - allow the width to scale, adjust and test free width
+
+  //  Playground:
+  //  - form with params.
+  //  - iframe with dynamic params.
+  //  - code of the iframe. with dynamic params.
+
   const init = async () => {
     //currencyPrices
     try {
@@ -69,6 +83,7 @@ export const App = () => {
     let tempFormParams: GenericObjectStringKeyPair = {};
     const currentUrl = window.location.href;
     const searchParams = new URLSearchParams(currentUrl.split("?")[1]);
+    const lastUsed = SwapTokenUtils.getLastUsed();
     if (searchParams.size > 0) {
       for (const p of searchParams) {
         if (!tempFormParams.hasOwnProperty(p[0])) {
@@ -76,10 +91,13 @@ export const App = () => {
         }
       }
       setFormParams(tempFormParams);
+    } else if (lastUsed && lastUsed.from && lastUsed.from.account) {
+      setFormParams({
+        partnerUsername: lastUsed.from.account,
+      });
+      tempFormParams["partnerUsername"] = lastUsed.from.account;
     } else {
       Logger.log("Missing URL params!");
-      //TODO cleanup
-      // setUsernameNotFound(true);
       setTimeout(() => {
         setLoading(false);
         setMessage({
@@ -90,6 +108,7 @@ export const App = () => {
       }, 1000);
       return;
     }
+
     if (await AccountUtils.doesAccountExist(tempFormParams.partnerUsername)) {
       setActiveAccount({
         name: tempFormParams.partnerUsername,
@@ -105,7 +124,6 @@ export const App = () => {
       Logger.log("Account not found in HIVE. Missing param", {
         username: tempFormParams.partnerUsername,
       });
-      // setUsernameNotFound(true);
       setMessage({
         type: MessageType.ERROR,
         key: "swap_widget_missing_param.message",
@@ -115,58 +133,9 @@ export const App = () => {
     setLoading(false);
   };
 
-  //TODO cleanup
-  // const checkUsername = async () => {
-  //   if (username && username.trim().length > 3) {
-  //     if (await AccountUtils.doesAccountExist(username)) {
-  //       setActiveAccount({
-  //         name: username,
-  //         account: await AccountUtils.getExtendedAccount(username),
-  //         keys: {},
-  //         rc: await AccountUtils.getRCMana(username),
-  //       });
-  //       setFormParams((prevForm) => {
-  //         return { ...prevForm, partnerUsername: username };
-  //       });
-  //       setUsernameNotFound(false);
-  //     }
-  //   }
-  // };
-
   return (
     <div className="App">
       {loading && <SplashscreenComponent />}
-      {/* {!loading && usernameNotFound && formParams && (
-        <>
-          <div className="logo-container">
-            <SVGIcon
-              className="logo"
-              icon={SVGIcons.KEYCHAIN_LOGO_SPLASHSCREEN}
-            />
-          </div>
-          <FormContainer>
-            <div className="caption">
-              {t("swap_no_username_widget.message")}
-            </div>
-            <div className="form-fields">
-              <div className="inputs">
-                <InputComponent
-                  type={InputType.TEXT}
-                  value={username}
-                  onChange={setUsername}
-                  label="popup_html_username"
-                  placeholder="popup_html_username"
-                />
-              </div>
-              <ButtonComponent
-                type={ButtonType.IMPORTANT}
-                label="popup_html_whats_new_next"
-                onClick={checkUsername}
-              />
-            </div>
-          </FormContainer>
-        </>
-      )} */}
       {!loading &&
         formParams &&
         Object.keys(formParams).length > 0 &&

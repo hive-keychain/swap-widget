@@ -61,6 +61,7 @@ interface Props {
   activeAccount: ActiveAccount;
   formParams: GenericObjectStringKeyPair;
   setMessage: (value: Message) => void;
+  reloadApp: () => void;
 }
 
 const TokenSwaps = ({
@@ -69,6 +70,7 @@ const TokenSwaps = ({
   activeAccount,
   formParams,
   setMessage,
+  reloadApp,
 }: Props) => {
   const [layerTwoDelayed, setLayerTwoDelayed] = useState(false);
   const [swapConfig, setSwapConfig] = useState({} as SwapConfig);
@@ -332,8 +334,8 @@ const TokenSwaps = ({
     }
   };
 
-  const goBack = async (estimateId: string) => {
-    await SwapTokenUtils.cancelSwap(estimateId);
+  const goBack = async (estimateId?: string) => {
+    if (estimateId) await SwapTokenUtils.cancelSwap(estimateId);
     setShowConfirmationPage(false);
     setConfirmationPageParams(undefined);
   };
@@ -396,10 +398,6 @@ const TokenSwaps = ({
       return;
     }
 
-    //TODO bellow important
-    //  1. find a way to render confirmation page. Maybe using "router-component-kidn-of"
-    //  2. the afterconfirmation, will try to execute the SDK swap operation, wait for result and present.
-
     const startTokenPrecision = await TokensUtils.getTokenPrecision(
       startToken?.value.symbol
     );
@@ -449,7 +447,8 @@ const TokenSwaps = ({
         } catch (error) {
           Logger.log({ error });
         } finally {
-          await goBack(estimateId);
+          await goBack();
+          reloadApp();
         }
       },
       afterCancelAction: async () => {

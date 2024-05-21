@@ -45,7 +45,6 @@ export const App = () => {
   //  - no confirmation page in widget.
   //  - show live status in widget of this trade. After finishing goes back initial page.
   //    -> "/token-swap/:id",
-  //  - reload balances.
   //  - pass the width as url param
   //  - allow the width to scale, adjust and test free width
 
@@ -55,6 +54,7 @@ export const App = () => {
   //  - code of the iframe. with dynamic params.
 
   const init = async () => {
+    setLoading(true);
     //currencyPrices
     try {
       const tempPrices = await CurrencyPricesUtils.getPrices();
@@ -145,6 +145,7 @@ export const App = () => {
             formParams={formParams}
             activeAccount={activeAccount}
             setMessage={(message) => setMessage(message)}
+            reloadApp={() => init()}
           />
         )}
       {message && (

@@ -33,6 +33,7 @@ const ButtonComponent = (props: ButtonProps) => {
       onClick={props.onClick}
     >
       {/* //TODO important check how to add props.labelParams to the t */}
+      {/* //TODO bellow and in all components, remove the .message, this will be done from the key assignment */}
       <div className="button-label">
         {props.skipLabelTranslation ? props.label : t(props.label + ".message")}{" "}
       </div>

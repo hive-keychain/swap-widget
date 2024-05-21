@@ -13,6 +13,7 @@ import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
 import { LocalStorageKeyEnum } from "@reference-data/local-storage-key.enum";
 import { LocalStorageUtils } from "@utils/local-storage.utils";
 import Logger from "@utils/logger.utils";
+import { TFunction } from "i18next";
 
 //TODO cleanup code & ask about localStorage???
 
@@ -163,6 +164,11 @@ const getServerStatus = async (): Promise<SwapServerStatus> => {
   return res.result;
 };
 
+//TODO ask Cedric to modify this is needed at all.
+const getSwapStatus = async (swapId: string) => {
+  return await KeychainSwapApi.get(`token-swap/${swapId}`);
+};
+
 const getConfig = async (): Promise<SwapConfig> => {
   const res = await KeychainSwapApi.get(`token-swap/public-config`);
   return res.result;
@@ -189,6 +195,29 @@ const setAsInitiated = async (swapId: ISwap["id"]) => {
   }
 };
 
+const getStatusMessage = (
+  status: ISwap["status"],
+  transferInitiated: boolean,
+  t: TFunction<"translation", undefined>
+) => {
+  switch (status) {
+    case SwapStatus.PENDING:
+      return transferInitiated
+        ? t("swap_status_pending.message")
+        : t("swap_transfer_not_sent.message");
+    case SwapStatus.COMPLETED:
+      return t("swap_status_completed.message");
+    case SwapStatus.CANCELED_DUE_TO_ERROR:
+      return t("swap_status_canceled_due_to_error.message");
+    case SwapStatus.FUNDS_RETURNED:
+      return t("swap_status_returned.message");
+    case SwapStatus.REFUNDED_SLIPPAGE:
+      return t("swap_status_refunded.message");
+    case SwapStatus.STARTED:
+      return t("swap_status_started.message");
+  }
+};
+
 export const SwapTokenUtils = {
   getSwapTokenStartList,
   processSwap,
@@ -201,4 +230,6 @@ export const SwapTokenUtils = {
   saveLastUsed,
   getLastUsed,
   setAsInitiated,
+  getSwapStatus,
+  getStatusMessage,
 };

@@ -26,16 +26,12 @@ import { CurrencyPrices } from "@interfaces/bittrex.interface";
 import FormatUtils from "@utils/format.utils";
 import Logger from "@utils/logger.utils";
 import { SwapTokenUtils } from "@utils/swap-token.utils";
-import { IStep } from "hive-keychain-commons";
+import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
 import React, { useEffect, useMemo, useState } from "react";
 // import "react-tabs/style/react-tabs.scss";
 import ButtonComponent, {
   ButtonType,
 } from "@common-ui/button/button.component";
-import {
-  ConfirmationPageComponent,
-  ConfirmationPageParams,
-} from "@common-ui/confirmation-page/confirmation-page.component";
 import {
   ComplexeCustomSelect,
   OptionItem,
@@ -72,6 +68,10 @@ const TokenSwaps = ({
   setMessage,
   reloadApp,
 }: Props) => {
+  const [swapHistory, setSwapHistory] = useState<ISwap[]>();
+  const [step, setStep] = useState(1);
+  const [waitingForKeychainResponse, setWaitingForKeychainResponse] =
+    useState(false);
   const [layerTwoDelayed, setLayerTwoDelayed] = useState(false);
   const [swapConfig, setSwapConfig] = useState({} as SwapConfig);
   const [underMaintenance, setUnderMaintenance] = useState(false);
@@ -90,18 +90,14 @@ const TokenSwaps = ({
   );
   const [estimate, setEstimate] = useState<IStep[]>();
   const [estimateValue, setEstimateValue] = useState<string | undefined>();
-
   const [autoRefreshCountdown, setAutoRefreshCountdown] = useState<
     number | null
   >(null);
-
   const [isAdvancedParametersOpen, setIsAdvancedParametersOpen] =
     useState(false);
-
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
-  const [showConfirmationPage, setShowConfirmationPage] = useState(false);
-  const [confirmationPageParams, setConfirmationPageParams] =
-    useState<ConfirmationPageParams>();
+  const [currentSwap, setCurrentSwap] = useState<ISwap>();
+  const [currentSwapId, setCurrentSwapId] = useState<string>();
 
   const { t } = useTranslation();
 
@@ -268,11 +264,10 @@ const TokenSwaps = ({
         }),
     ];
     const lastUsed = SwapTokenUtils.getLastUsed();
-    setStartToken(
-      lastUsed.from
-        ? list.find((t) => t.value.symbol === lastUsed.from.symbol)
-        : list[0]
-    );
+    const startTokenToSet = lastUsed.from
+      ? list.find((t) => t.value.symbol === lastUsed.from.symbol) || list[0]
+      : list[0];
+    setStartToken(startTokenToSet);
     setStartTokenListOptions(list);
     const endTokenToSet = lastUsed.to
       ? endList.find((t) => t.value.symbol === lastUsed.to.symbol)
@@ -336,8 +331,8 @@ const TokenSwaps = ({
 
   const goBack = async (estimateId?: string) => {
     if (estimateId) await SwapTokenUtils.cancelSwap(estimateId);
-    setShowConfirmationPage(false);
-    setConfirmationPageParams(undefined);
+    setStep(1);
+    setWaitingForKeychainResponse(false);
   };
 
   const processSwap = async () => {
@@ -398,72 +393,60 @@ const TokenSwaps = ({
       return;
     }
 
-    const startTokenPrecision = await TokensUtils.getTokenPrecision(
-      startToken?.value.symbol
-    );
-    const endTokenPrecision = await TokensUtils.getTokenPrecision(
-      endToken?.value.symbol
-    );
-
-    const fields = [
-      { label: "html_popup_swap_swap_id.message", value: estimateId },
-      {
-        label: "html_popup_swap_swap_amount.message",
-        value: `${FormatUtils.withCommas(
-          Number(amount).toFixed(startTokenPrecision)
-        )} ${startToken?.value.symbol} => ${FormatUtils.withCommas(
-          estimateValue!.toString()
-        )} ${endToken?.value.symbol}`,
-      },
-      {
-        label: "html_popup_swap_swap_slipperage.message",
-        value: `${slippage}% (for each step)`,
-      },
-    ];
-    setConfirmationPageParams({
-      fields,
-      message: t("html_popup_swap_token_confirm_message.message"),
-      title: "html_popup_swap_token_confirm_title.message",
-      formParams: getFormParams(),
-      afterConfirmAction: async () => {
-        const keychain = new KeychainSDK(window);
-        try {
-          const swapMessage: any = await keychain.swap.start({
-            username: getFormParams().username,
-            startToken: getFormParams().startToken!.value.symbol,
-            endToken: getFormParams().endToken!.value.symbol,
-            amount: Number(getFormParams().amount),
-            slippage: getFormParams().slipperage,
-            steps: estimate,
-          });
-          console.log({ swapMessage });
-          if (swapMessage.success) {
-            SwapTokenUtils.saveLastUsed(startToken?.value, endToken?.value);
-            setMessage({
-              type: MessageType.SUCCESS,
-              key: "html_popup_swap_token_success_message.message",
-            });
-          }
-        } catch (error) {
-          Logger.log({ error });
-        } finally {
-          await goBack();
-          reloadApp();
-        }
-      },
-      afterCancelAction: async () => {
-        await goBack(estimateId);
-      },
-      activeAccount,
-      method: null,
-    } as ConfirmationPageParams);
+    setStep(2);
+    const keychain = new KeychainSDK(window);
+    try {
+      setWaitingForKeychainResponse(true);
+      const swapMessage: any = await keychain.swap.start({
+        username: getFormParams().username,
+        startToken: getFormParams().startToken!.value.symbol,
+        endToken: getFormParams().endToken!.value.symbol,
+        amount: Number(getFormParams().amount),
+        slippage: getFormParams().slipperage,
+        steps: estimate,
+      });
+      //TODO bellow handle swapMessage.error?
+      if (swapMessage.success) {
+        setCurrentSwapId(swapMessage.data.swapId);
+        SwapTokenUtils.saveLastUsed(startToken?.value, endToken?.value);
+        const tempSwapHistory = await SwapTokenUtils.retrieveSwapHistory(
+          activeAccount.name!
+        );
+        setSwapHistory(tempSwapHistory);
+      }
+    } catch (error) {
+      await goBack();
+      Logger.log({ error });
+    }
   };
 
   useEffect(() => {
-    if (confirmationPageParams) {
-      setShowConfirmationPage(true);
+    let swapHistoryInterval: string | number | NodeJS.Timeout | undefined;
+    if (!swapHistoryInterval && swapHistory) {
+      swapHistoryInterval = setInterval(async () => {
+        const tempSwapHistory = await SwapTokenUtils.retrieveSwapHistory(
+          activeAccount.name!
+        );
+        const tempCurrentSwap = tempSwapHistory.find(
+          (s) => s.id === currentSwapId
+        );
+        if (tempCurrentSwap) {
+          setCurrentSwap(tempCurrentSwap);
+          if (
+            tempCurrentSwap.status === SwapStatus.CANCELED_DUE_TO_ERROR ||
+            tempCurrentSwap.status === SwapStatus.COMPLETED ||
+            tempCurrentSwap.status === SwapStatus.FUNDS_RETURNED ||
+            tempCurrentSwap.status === SwapStatus.REFUNDED_SLIPPAGE
+          ) {
+            clearInterval(swapHistoryInterval);
+          }
+        }
+      }, 1000);
     }
-  }, [confirmationPageParams]);
+    return () => {
+      clearInterval(swapHistoryInterval);
+    };
+  }, [swapHistory]);
 
   const getFormParams = () => {
     return {
@@ -519,8 +502,27 @@ const TokenSwaps = ({
     }
   };
 
+  const finishSwap = async () => {
+    setCurrentSwap(undefined);
+    setSwapHistory(undefined);
+    await goBack();
+    reloadApp();
+  };
+
+  const getShortenedId = (id: string) => {
+    return id.substring(0, 6) + "..." + id.slice(-6);
+  };
+
+  const copyIdToClipboard = (id: string) => {
+    navigator.clipboard.writeText(id.toString());
+    setMessage({
+      type: MessageType.INFO,
+      key: "swap_copied_to_clipboard.message",
+    });
+  };
+
   const renderPage = () => {
-    if (!showConfirmationPage) {
+    if (step === 1) {
       if (loading)
         return (
           <div className="rotating-logo-wrapper">
@@ -699,8 +701,43 @@ const TokenSwaps = ({
             {serviceUnavailable && <ServiceUnavailablePage />}
           </div>
         );
-    } else if (confirmationPageParams && showConfirmationPage) {
-      return <ConfirmationPageComponent {...confirmationPageParams} />;
+    } else if (step === 2) {
+      return waitingForKeychainResponse ? (
+        <div className="token-swaps loading-swap-status">
+          <div className="rotating-logo-wrapper">
+            <RotatingLogoComponent />
+          </div>
+          {currentSwapId && (
+            <div
+              className="caption id swap-status"
+              onClick={() => copyIdToClipboard(currentSwapId)}
+            >
+              {t("html_popup_swap_swap_id.message")}:{" "}
+              {getShortenedId(currentSwapId)}
+            </div>
+          )}
+          {!currentSwap && (
+            <div className="caption swap-status">
+              {t("html_popup_swap_in_process.message")}...
+            </div>
+          )}
+          {currentSwap && (
+            <div className="swap-status-container">
+              <div className="caption swap-status">
+                {t("popup_html_label_status.message")}:{" "}
+                {SwapTokenUtils.getStatusMessage(currentSwap.status, true, t)}
+              </div>
+              {currentSwap.status === SwapStatus.COMPLETED && (
+                <ButtonComponent
+                  type={ButtonType.IMPORTANT}
+                  label="html_popup_next_swap_transaction"
+                  onClick={finishSwap}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      ) : null;
     }
     return null;
   };

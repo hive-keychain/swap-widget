@@ -5,9 +5,31 @@
   flex: 1;
   flex-flow: column wrap;
 
+  &.loading-swap-status {
+    height: 80%;
+    flex: unset;
+    flex-direction: column;
+  }
+
+  .swap-status-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0 48px;
+    justify-content: center;
+    align-items: center;
+  }
+
   .caption {
     @include caption();
     margin-top: 16px;
+    &.swap-status {
+      margin-top: 0px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    &.id {
+      cursor: pointer;
+    }
   }
 
   .top-row {

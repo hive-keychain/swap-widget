@@ -42,11 +42,9 @@ export const App = () => {
   }, []);
 
   //TODO
-  //  - no confirmation page in widget.
-  //  - show live status in widget of this trade. After finishing goes back initial page.
-  //    -> "/token-swap/:id",
-  //  - pass the width as url param
-  //  - allow the width to scale, adjust and test free width
+  //  //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slipperage=5
+  //  - add icons and status, same as swap in ext.
+  //  - try refactoring & moving to utils what you can.
 
   //  Playground:
   //  - form with params.
@@ -62,7 +60,6 @@ export const App = () => {
     } catch (e) {
       Logger.error("currency price error", (e as any).toString());
     }
-
     //tokenMarket
     try {
       const tempTokensMarket = await TokensUtils.getTokensMarket(
@@ -73,9 +70,14 @@ export const App = () => {
       );
       setTokenMarket(tempTokensMarket);
     } catch (error) {
+      setMessage({
+        type: MessageType.ERROR,
+        key: "popup_html_error_retrieving_tokens_market.message",
+      });
+      setMissingParams(true);
       Logger.error("tokensMarket error", (error as any).toString());
+      return;
     }
-    //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slipperage=5
     let tempFormParams: GenericObjectStringKeyPair = {};
     const currentUrl = window.location.href;
     const searchParams = new URLSearchParams(currentUrl.split("?")[1]);

@@ -143,6 +143,10 @@
     "message": "New Label",
     "description": "Placeholder in input for new favorite label item"
   },
+  "popup_html_label_status": {
+    "message": "Status",
+    "description": "Label to show status"
+  },
   "popup_html_signin": {
     "message": "Sign In"
   },
@@ -2505,6 +2509,10 @@
     "message": "An error occured while retrieving the witness ranking. Please try again later.",
     "description": "Error while retrieving witness ranking, hivesql not down"
   },
+  "popup_html_error_retrieving_tokens_market": {
+    "message": "An error occured while retrieving the tokens market from HIVE. Please try again later.",
+    "description": "Error while retrieving witness ranking, hivesql not down"
+  },
   "popup_html_error_retrieving_witness_information": {
     "message": "An error occured while retrieving the witness account information. Please try again later.",
     "description": "Error while retrieving witness information, hivesql not down"
@@ -3451,6 +3459,10 @@
     "message": "Swap",
     "description": "Token swaps : process"
   },
+  "html_popup_swap_in_process": {
+    "message": "Swap in Process",
+    "description": "Widget swaps : processing"
+  },
   "html_popup_swaps_documentation_message": {
     "message": "Please check our Playground to learn how to properly use it. <a target='__blank' href='https://hive-keychain.com/#/terms'>//TODO add link to playground</a>",
     "description": "swap widget: wrong partner username param"
@@ -3894,6 +3906,10 @@
   "html_popup_next_unstake_transaction": {
     "message": "Next transaction",
     "description": "Next transaction unstake"
+  },
+  "html_popup_next_swap_transaction": {
+    "message": "Next swap",
+    "description": "Next swap transaction widget"
   },
   "html_popup_remaining_transaction": {
     "message": "$1 transactions remaining",

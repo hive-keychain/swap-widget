@@ -310,6 +310,14 @@ const TokenSwaps = ({
     }
   };
 
+  const checkIfIframe = () => {
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      return true;
+    }
+  };
+
   const goBack = async (estimateId?: string) => {
     if (estimateId) await SwapTokenUtils.cancelSwap(estimateId);
     setStep(1);
@@ -375,7 +383,11 @@ const TokenSwaps = ({
     }
 
     setStep(2);
-    const keychain = new KeychainSDK(window);
+    const runningOnIFrame = checkIfIframe();
+    const keychain = new KeychainSDK(
+      runningOnIFrame ? global.window.parent : window
+    );
+    console.log({ w: window, wP: global.window.parent, runningOnIFrame }); //TODO remove line
     if (!(await keychain.isKeychainInstalled())) {
       setMessage({
         type: MessageType.ERROR,

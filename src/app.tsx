@@ -40,9 +40,6 @@ export const App = () => {
 
   //TODO
   //  //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slipperage=5&theme=light
-  //  - add icons and status, same as swap in ext.
-  //  - try refactoring & moving to utils what you can.
-  //  - check how simpleswap & stealthex handle widget sizes, width & height and decide what to do with params & playground
 
   //  Playground:
   //  - form with params.

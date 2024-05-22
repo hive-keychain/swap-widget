@@ -401,7 +401,6 @@ const TokenSwaps = ({
           swapMessage.data.swapId
         );
         if (tempSwapStatus) setCurrentSwapStatus(tempSwapStatus);
-        console.log({ tempSwapStatus }); //TODO remove line
       }
     } catch (error) {
       await goBack();
@@ -416,7 +415,6 @@ const TokenSwaps = ({
         const tempCurrentSwapStatus = await SwapTokenUtils.getSwapStatus(
           currentSwapId!
         );
-        console.log({ tempCurrentSwapStatus }); //TODO remove line
         setCurrentSwapStatus(tempCurrentSwapStatus);
         if (
           tempCurrentSwapStatus.status === SwapStatus.CANCELED_DUE_TO_ERROR ||

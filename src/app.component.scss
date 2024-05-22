@@ -116,7 +116,7 @@
   background: $message-container-warning !important;
 }
 
-@media only screen and (max-device-width: 380px) {
+@media only screen and (max-width: 380px) {
   .missing-param-logo {
     width: 80% !important;
     text-align: center;

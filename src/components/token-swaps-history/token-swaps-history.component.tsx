@@ -82,7 +82,6 @@ const TokenSwapsHistory = ({ activeAccount }: Props) => {
       <div className="refresh-panel">
         {!!autoRefreshCountdown && (
           <>
-            {/* //TODO check how to add the count  [autoRefreshCountdown?.toString()] */}
             {t("swap_refresh_countdown.message")}
             <SVGIcon
               className={`swap-history-refresh ${

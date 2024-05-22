@@ -72,7 +72,7 @@
     }
   }
 
-  @media only screen and (max-device-width: 300px) {
+  @media only screen and (max-width: 300px) {
     .loading-animation-container {
       width: calc(65%);
     }

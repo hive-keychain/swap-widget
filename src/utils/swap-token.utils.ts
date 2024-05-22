@@ -156,8 +156,8 @@ const getServerStatus = async (): Promise<SwapServerStatus> => {
   return res.result;
 };
 
-const getSwapStatus = async (swapId: string) => {
-  return await KeychainSwapApi.get(`token-swap-status/${swapId}`);
+const getSwapStatus = async (swapId: string): Promise<ISwap> => {
+  return (await KeychainSwapApi.get(`token-swap-status/${swapId}`)).result;
 };
 
 const getConfig = async (): Promise<SwapConfig> => {

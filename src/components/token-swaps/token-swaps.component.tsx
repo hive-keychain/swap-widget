@@ -1,34 +1,3 @@
-import { SwapConfig } from "@interfaces/swap-token.interface";
-import { Token, TokenMarket } from "@interfaces/tokens.interface";
-// import { loadTokensMarket } from "@popup/hive/actions/token.actions";
-import { BaseCurrencies } from "@utils/hive/currency.utils";
-import TokensUtils from "@utils/hive/tokens.utils";
-// import {
-//   addToLoadingList,
-//   removeFromLoadingList,
-// } from "@popup/multichain/actions/loading.actions";
-// import {
-//   setErrorMessage,
-//   setSuccessMessage,
-//   setWarningMessage,
-// } from "@popup/multichain/actions/message.actions";
-// import {
-//   goBackToThenNavigate,
-//   navigateTo,
-//   navigateToWithParams,
-// } from "@popup/multichain/actions/navigation.actions";
-// import { setTitleContainerProperties } from "@popup/multichain/actions/title-container.actions";
-// import { RootState } from "@popup/multichain/store";
-// import { Screen } from "@reference-data/screen.enum";
-import Config from "@configFile";
-import { ActiveAccount } from "@interfaces/active-account.interface";
-import { CurrencyPrices } from "@interfaces/bittrex.interface";
-import FormatUtils from "@utils/format.utils";
-import Logger from "@utils/logger.utils";
-import { SwapTokenUtils } from "@utils/swap-token.utils";
-import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
-import React, { useEffect, useMemo, useState } from "react";
-// import "react-tabs/style/react-tabs.scss";
 import ButtonComponent, {
   ButtonType,
 } from "@common-ui/button/button.component";
@@ -44,10 +13,22 @@ import InputComponent from "@common-ui/input/input.component";
 import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
 import ServiceUnavailablePage from "@common-ui/service-unavailable-page/service-unavailable-page.component";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
+import Config from "@configFile";
+import { ActiveAccount } from "@interfaces/active-account.interface";
+import { CurrencyPrices } from "@interfaces/bittrex.interface";
 import { Message } from "@interfaces/message.interface";
+import { SwapConfig } from "@interfaces/swap-token.interface";
+import { Token, TokenMarket } from "@interfaces/tokens.interface";
 import { MessageType } from "@reference-data/message-type.enum";
+import FormatUtils from "@utils/format.utils";
+import { BaseCurrencies } from "@utils/hive/currency.utils";
+import TokensUtils from "@utils/hive/tokens.utils";
+import Logger from "@utils/logger.utils";
+import { SwapTokenUtils } from "@utils/swap-token.utils";
+import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
 import { KeychainSDK } from "keychain-sdk";
 import { ThrottleSettings, throttle } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { GenericObjectStringKeyPair } from "src/app";
 
@@ -68,7 +49,7 @@ const TokenSwaps = ({
   setMessage,
   reloadApp,
 }: Props) => {
-  const [swapHistory, setSwapHistory] = useState<ISwap[]>();
+  const [currentSwapStatus, setCurrentSwapStatus] = useState<ISwap>();
   const [step, setStep] = useState(1);
   const [waitingForKeychainResponse, setWaitingForKeychainResponse] =
     useState(false);
@@ -96,7 +77,6 @@ const TokenSwaps = ({
   const [isAdvancedParametersOpen, setIsAdvancedParametersOpen] =
     useState(false);
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
-  const [currentSwap, setCurrentSwap] = useState<ISwap>();
   const [currentSwapId, setCurrentSwapId] = useState<string>();
 
   const { t } = useTranslation();
@@ -385,11 +365,10 @@ const TokenSwaps = ({
         activeAccount.name!
       );
     } catch (err: any) {
-      console.log({ err }); //TODO remove line
       setMessage({
-        key: err.reason.template + ".message",
+        key: err.message,
         type: MessageType.ERROR,
-        params: err.reason.params,
+        skipTranslation: true,
       });
       return;
     }
@@ -406,14 +385,14 @@ const TokenSwaps = ({
         slippage: getFormParams().slipperage,
         steps: estimate,
       });
-      //TODO bellow handle swapMessage.error?
+
       if (swapMessage.success) {
         setCurrentSwapId(swapMessage.data.swapId);
-        SwapTokenUtils.saveLastUsed(startToken?.value, endToken?.value);
-        const tempSwapHistory = await SwapTokenUtils.retrieveSwapHistory(
-          activeAccount.name!
+        const tempSwapStatus = await SwapTokenUtils.getSwapStatus(
+          swapMessage.data.swapId
         );
-        setSwapHistory(tempSwapHistory);
+        if (tempSwapStatus) setCurrentSwapStatus(tempSwapStatus);
+        console.log({ tempSwapStatus }); //TODO remove line
       }
     } catch (error) {
       await goBack();
@@ -423,31 +402,27 @@ const TokenSwaps = ({
 
   useEffect(() => {
     let swapHistoryInterval: string | number | NodeJS.Timeout | undefined;
-    if (!swapHistoryInterval && swapHistory) {
+    if (!swapHistoryInterval && currentSwapStatus) {
       swapHistoryInterval = setInterval(async () => {
-        const tempSwapHistory = await SwapTokenUtils.retrieveSwapHistory(
-          activeAccount.name!
+        const tempCurrentSwapStatus = await SwapTokenUtils.getSwapStatus(
+          currentSwapId!
         );
-        const tempCurrentSwap = tempSwapHistory.find(
-          (s) => s.id === currentSwapId
-        );
-        if (tempCurrentSwap) {
-          setCurrentSwap(tempCurrentSwap);
-          if (
-            tempCurrentSwap.status === SwapStatus.CANCELED_DUE_TO_ERROR ||
-            tempCurrentSwap.status === SwapStatus.COMPLETED ||
-            tempCurrentSwap.status === SwapStatus.FUNDS_RETURNED ||
-            tempCurrentSwap.status === SwapStatus.REFUNDED_SLIPPAGE
-          ) {
-            clearInterval(swapHistoryInterval);
-          }
+        console.log({ tempCurrentSwapStatus }); //TODO remove line
+        setCurrentSwapStatus(tempCurrentSwapStatus);
+        if (
+          tempCurrentSwapStatus.status === SwapStatus.CANCELED_DUE_TO_ERROR ||
+          tempCurrentSwapStatus.status === SwapStatus.COMPLETED ||
+          tempCurrentSwapStatus.status === SwapStatus.FUNDS_RETURNED ||
+          tempCurrentSwapStatus.status === SwapStatus.REFUNDED_SLIPPAGE
+        ) {
+          clearInterval(swapHistoryInterval);
         }
       }, 1000);
     }
     return () => {
       clearInterval(swapHistoryInterval);
     };
-  }, [swapHistory]);
+  }, [currentSwapStatus]);
 
   const getFormParams = () => {
     return {
@@ -504,8 +479,8 @@ const TokenSwaps = ({
   };
 
   const finishSwap = async () => {
-    setCurrentSwap(undefined);
-    setSwapHistory(undefined);
+    setCurrentSwapStatus(undefined);
+    setCurrentSwapId(undefined);
     await goBack();
     reloadApp();
   };
@@ -718,18 +693,22 @@ const TokenSwaps = ({
               </div>
             </CustomTooltip>
           )}
-          {!currentSwap && (
+          {!currentSwapStatus && (
             <div className="caption swap-status">
               {t("html_popup_swap_in_process.message")}...
             </div>
           )}
-          {currentSwap && (
+          {currentSwapStatus && (
             <div className="swap-status-container">
               <div className="caption swap-status">
                 {t("popup_html_label_status.message")}:{" "}
-                {SwapTokenUtils.getStatusMessage(currentSwap.status, true, t)}
+                {SwapTokenUtils.getStatusMessage(
+                  currentSwapStatus.status,
+                  true,
+                  t
+                )}
               </div>
-              {currentSwap.status === SwapStatus.COMPLETED && (
+              {currentSwapStatus.status === SwapStatus.COMPLETED && (
                 <ButtonComponent
                   type={ButtonType.IMPORTANT}
                   label="html_popup_next_swap_transaction.message"

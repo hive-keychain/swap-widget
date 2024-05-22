@@ -63,7 +63,7 @@ export const AutocompleteBox = ({
                 <div className="category" key={category.title}>
                   <span className="title">
                     {category.translateTitle
-                      ? t(category.title + ".message")
+                      ? t(category.title)
                       : category.title}
                   </span>
                   {category.values.map((autoCompleteItem, index) => (

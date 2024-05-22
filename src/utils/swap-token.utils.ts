@@ -3,19 +3,15 @@ import { Asset, ExtendedAccount } from "@hiveio/dhive";
 import { ActiveAccount } from "@interfaces/active-account.interface";
 import { SwapConfig, SwapServerStatus } from "@interfaces/swap-token.interface";
 import { TokenBalance } from "@interfaces/tokens.interface";
+import { LocalStorageKeyEnum } from "@reference-data/local-storage-key.enum";
+import FormatUtils from "@utils/format.utils";
 import { BaseCurrencies } from "@utils/hive/currency.utils";
 import TokensUtils from "@utils/hive/tokens.utils";
 import TransferUtils from "@utils/hive/transfer.utils";
-// import { LocalStorageKeyEnum } from '@reference-data/local-storage-key.enum';
-import FormatUtils from "@utils/format.utils";
-import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
-// import LocalStorageUtils from 'src/utils/localStorage.utils';
-import { LocalStorageKeyEnum } from "@reference-data/local-storage-key.enum";
 import { LocalStorageUtils } from "@utils/local-storage.utils";
 import Logger from "@utils/logger.utils";
+import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
 import { TFunction } from "i18next";
-
-//TODO cleanup code & ask about localStorage???
 
 const getSwapTokenStartList = async (account: ExtendedAccount) => {
   let userTokenList: TokenBalance[] = await TokensUtils.getUserBalance(
@@ -134,10 +130,6 @@ const retrieveSwapHistory = async (username: string): Promise<ISwap[]> => {
   }
   const swaps = [];
   for (const s of res.result) {
-    // const precisionStartToken = await TokensUtils.getTokenPrecision(
-    //   s.startToken,
-    // );
-    // const precisionEndToken = await TokensUtils.getTokenPrecision(s.endToken);
     if (s.status === SwapStatus.PENDING && !s.transferInitiated) continue;
     swaps.push({
       ...s,
@@ -164,9 +156,8 @@ const getServerStatus = async (): Promise<SwapServerStatus> => {
   return res.result;
 };
 
-//TODO ask Cedric to modify this is needed at all.
 const getSwapStatus = async (swapId: string) => {
-  return await KeychainSwapApi.get(`token-swap/${swapId}`);
+  return await KeychainSwapApi.get(`token-swap-status/${swapId}`);
 };
 
 const getConfig = async (): Promise<SwapConfig> => {

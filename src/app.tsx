@@ -9,6 +9,7 @@ import { Message } from "@interfaces/message.interface";
 import { TokenMarket } from "@interfaces/tokens.interface";
 import { MessageType } from "@reference-data/message-type.enum";
 import { DEFAULT_FORM_PARAMS } from "@reference-data/swap-widget";
+import { Theme, useThemeContext } from "@theme-context";
 import AccountUtils from "@utils/hive/account.utils";
 import CurrencyPricesUtils from "@utils/hive/currency-prices.utils";
 import TokensUtils from "@utils/hive/tokens.utils";
@@ -21,11 +22,6 @@ export interface GenericObjectStringKeyPair {
   [key: string]: string;
 }
 
-//TODO important:
-//  -> create a new local project that uses the iframe, test + add width.
-//    -> ask the team how they want to handle the styles(width/height)
-//  -> after all good and working, add this to the playground.
-
 export const App = () => {
   const [missingParams, setMissingParams] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -36,15 +32,17 @@ export const App = () => {
   const [tokenMarket, setTokenMarket] = useState<TokenMarket[]>();
   const [message, setMessage] = useState<Message>();
   const { t } = useTranslation();
+  const { setTheme } = useThemeContext();
 
   useEffect(() => {
     init();
   }, []);
 
   //TODO
-  //  //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slipperage=5
+  //  //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slipperage=5&theme=light
   //  - add icons and status, same as swap in ext.
   //  - try refactoring & moving to utils what you can.
+  //  - check how simpleswap & stealthex handle widget sizes, width & height and decide what to do with params & playground
 
   //  Playground:
   //  - form with params.
@@ -89,6 +87,12 @@ export const App = () => {
         }
       }
       setFormParams(tempFormParams);
+      if (
+        tempFormParams.theme &&
+        (tempFormParams.theme === Theme.DARK ||
+          tempFormParams.theme === Theme.LIGHT)
+      )
+        setTheme(tempFormParams.theme as Theme);
     } else if (lastUsed && lastUsed.from && lastUsed.from.account) {
       setFormParams({
         partnerUsername: lastUsed.from.account,

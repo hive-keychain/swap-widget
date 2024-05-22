@@ -14,8 +14,6 @@ const FormValidationError: Record<string, string> = {
 const parseJoiError = (error: FieldError) => {
   const { t } = useTranslation();
   Logger.error("Error in form: ", error);
-  //TODO bellow see how to add
-  //error.ref?.value ? [error.ref.value] : []
   let errMessage = t(FormValidationError[error.type]);
 
   return errMessage;

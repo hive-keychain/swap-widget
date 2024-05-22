@@ -1,4 +1,3 @@
-//TODO bellow ask & check if needed to only have whats needed in swaps & delete the rest.
 export enum SVGIcons {
   BOTTOM_BAR_BUY = "bottom-bar/buy",
   BOTTOM_BAR_ECOSYSTEM = "bottom-bar/ecosystem",

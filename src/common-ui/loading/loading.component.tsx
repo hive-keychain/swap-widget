@@ -36,7 +36,6 @@ const Loading = ({ hide, operations, caption, loadingPercentage }: Props) => {
         {operations &&
           operations.map((operation) => (
             <div className="loading-operation" key={operation.name}>
-              {/* //TODO bellow check how to add operation.operationParams, */}
               <span
                 dangerouslySetInnerHTML={{
                   __html: t(operation.name),

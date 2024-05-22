@@ -12,7 +12,7 @@ export interface ButtonProps {
   onClick: (event?: any) => void;
   label: string;
   skipLabelTranslation?: boolean;
-  labelParams?: string[];
+  labelParams?: {};
   logo?: SVGIcons;
   type?: ButtonType;
   dataTestId?: string;
@@ -32,10 +32,10 @@ const ButtonComponent = (props: ButtonProps) => {
       }  ${props.additionalClass ?? ""} ${props.height ?? "medium"}`}
       onClick={props.onClick}
     >
-      {/* //TODO important check how to add props.labelParams to the t */}
-      {/* //TODO bellow and in all components, remove the .message, this will be done from the key assignment */}
       <div className="button-label">
-        {props.skipLabelTranslation ? props.label : t(props.label + ".message")}{" "}
+        {props.skipLabelTranslation
+          ? props.label
+          : t(props.label, props.labelParams)}{" "}
       </div>
       {props.logo && <SVGIcon icon={props.logo} className="logo" />}
     </button>

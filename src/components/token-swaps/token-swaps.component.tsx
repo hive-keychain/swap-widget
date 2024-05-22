@@ -370,7 +370,7 @@ const TokenSwaps = ({
       setMessage({
         key: "hive_engine_overdraw_balance_error.message",
         type: MessageType.ERROR,
-        params: [startToken?.label!],
+        params: { currentBalance: startToken?.label! },
       });
       return;
     }
@@ -385,6 +385,7 @@ const TokenSwaps = ({
         activeAccount.name!
       );
     } catch (err: any) {
+      console.log({ err }); //TODO remove line
       setMessage({
         key: err.reason.template + ".message",
         type: MessageType.ERROR,
@@ -470,7 +471,7 @@ const TokenSwaps = ({
       setMessage({
         key: "swap_cannot_switch_tokens.message",
         type: MessageType.ERROR,
-        params: endToken?.value.symbol,
+        params: { symbol: endToken?.value.symbol },
       });
     }
   };
@@ -551,7 +552,7 @@ const TokenSwaps = ({
                             selectedItem={startToken}
                             options={startTokenListOptions}
                             setSelectedItem={setStartToken}
-                            label="token"
+                            label="token.message"
                             filterable
                           />
                         )}
@@ -559,8 +560,8 @@ const TokenSwaps = ({
                           type={InputType.NUMBER}
                           value={amount}
                           onChange={setAmount}
-                          label="popup_html_transfer_amount"
-                          placeholder="popup_html_transfer_amount"
+                          label="popup_html_transfer_amount.message"
+                          placeholder="popup_html_transfer_amount.message"
                           min={0}
                           rightActionClicked={() =>
                             setAmount(startToken?.value.balance)
@@ -587,7 +588,7 @@ const TokenSwaps = ({
                             selectedItem={endToken}
                             options={endTokenListOptions}
                             setSelectedItem={setEndToken}
-                            label="token"
+                            label="token.message"
                             filterable
                           />
                         )}
@@ -609,7 +610,7 @@ const TokenSwaps = ({
                             }
                             disabled
                             onChange={() => {}}
-                            placeholder="popup_html_transfer_amount"
+                            placeholder="popup_html_transfer_amount.message"
                             rightActionIconClassname={
                               loadingEstimate ? "rotate" : ""
                             }
@@ -631,15 +632,11 @@ const TokenSwaps = ({
                       </div>
                       <div className="countdown">
                         {!!autoRefreshCountdown && (
-                          <>
-                            {
-                              <span>
-                                {t("swap_autorefresh.message", {
-                                  autoRefreshCountdown,
-                                })}
-                              </span>
-                            }
-                          </>
+                          <span>
+                            {t("swap_autorefresh.message", {
+                              autoRefreshCountdown,
+                            })}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -673,9 +670,8 @@ const TokenSwaps = ({
                             step={1}
                             value={slippage}
                             onChange={setSlippage}
-                            label="html_popup_swaps_slipperage"
-                            placeholder="html_popup_swaps_slipperage"
-                            // tooltip="html_popup_swaps_slippage_definition"
+                            label="html_popup_swaps_slipperage.message"
+                            placeholder="html_popup_swaps_slipperage.message"
                           />
                         </div>
                       )}
@@ -683,7 +679,7 @@ const TokenSwaps = ({
                   </div>
                   <ButtonComponent
                     type={ButtonType.IMPORTANT}
-                    label="html_popup_swaps_process_swap"
+                    label="html_popup_swaps_process_swap.message"
                     onClick={processSwap}
                   />
                 </FormContainer>
@@ -708,13 +704,19 @@ const TokenSwaps = ({
             <RotatingLogoComponent />
           </div>
           {currentSwapId && (
-            <div
-              className="caption id swap-status"
-              onClick={() => copyIdToClipboard(currentSwapId)}
+            <CustomTooltip
+              color="grey"
+              message={t("popup_html_copy_swap_id_tooltip_text.message")}
+              position={"top"}
             >
-              {t("html_popup_swap_swap_id.message")}:{" "}
-              {getShortenedId(currentSwapId)}
-            </div>
+              <div
+                className="caption id swap-status"
+                onClick={() => copyIdToClipboard(currentSwapId)}
+              >
+                {t("html_popup_swap_swap_id.message")}:{" "}
+                {getShortenedId(currentSwapId)}
+              </div>
+            </CustomTooltip>
           )}
           {!currentSwap && (
             <div className="caption swap-status">
@@ -730,7 +732,7 @@ const TokenSwaps = ({
               {currentSwap.status === SwapStatus.COMPLETED && (
                 <ButtonComponent
                   type={ButtonType.IMPORTANT}
-                  label="html_popup_next_swap_transaction"
+                  label="html_popup_next_swap_transaction.message"
                   onClick={finishSwap}
                 />
               )}

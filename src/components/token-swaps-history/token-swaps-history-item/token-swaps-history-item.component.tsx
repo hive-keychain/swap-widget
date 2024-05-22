@@ -1,5 +1,3 @@
-// import { setInfoMessage } from '@popup/multichain/actions/message.actions';
-// import { RootState } from '@popup/multichain/store';
 import { CustomTooltip } from "@common-ui/custom-tooltip/custom-tooltip.component";
 import { SVGIcons } from "@common-ui/icons.enum";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
@@ -19,6 +17,7 @@ const TokenSwapsHistoryItem = ({ swap }: Props) => {
 
   const copyIdToCliplboard = (id: string) => {
     navigator.clipboard.writeText(id.toString());
+    //TODO when usin check & pass setMessage.
     // setInfoMessage('swap_copied_to_clipboard');
   };
   const getStatusMessage = (
@@ -78,8 +77,9 @@ const TokenSwapsHistoryItem = ({ swap }: Props) => {
     return `${getStatusMessage(swap.status, swap.transferInitiated)}
       <br/> ${
         [SwapStatus.PENDING, SwapStatus.STARTED].includes(swap.status)
-          ? //TODO bellow check how to add params.  [ moment(swap.updatedAt).format("YYYY-MM-DD HH:mm:ss")]
-            t("swap_last_update.message")
+          ? t("swap_last_update.message", {
+              updatedAt: moment(swap.updatedAt).format("YYYY-MM-DD HH:mm:ss"),
+            })
           : moment(swap.updatedAt).format("YYYY-MM-DD HH:mm:ss")
       }`;
   }
@@ -178,12 +178,5 @@ const TokenSwapsHistoryItem = ({ swap }: Props) => {
     </div>
   );
 };
-
-// const mapStateToProps = (state: RootState) => {
-//   return {};
-// };
-
-// const connector = connect(mapStateToProps, { setInfoMessage });
-// type PropsFromRedux = ConnectedProps<typeof connector> & Props;
 
 export const TokenSwapsHistoryItemComponent = TokenSwapsHistoryItem;

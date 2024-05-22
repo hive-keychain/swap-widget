@@ -121,7 +121,7 @@ export function ComplexeCustomSelect<T extends OptionItem>(
         <div className="label">
           {itemProps.skipLabelTranslation
             ? itemProps.label
-            : t(itemProps.label + ".message")}
+            : t(itemProps.label)}
         </div>
       )}
       <Select

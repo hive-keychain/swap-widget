@@ -63,15 +63,11 @@ const InputComponent = React.forwardRef((props: InputProps, ref: any) => {
     <div className={`custom-input ${props.classname ?? ""}`}>
       {props.label && (
         <div className="label">
-          {props.skipLabelTranslation
-            ? props.label
-            : t(props.label + ".message")}{" "}
+          {props.skipLabelTranslation ? props.label : t(props.label)}{" "}
           {props.required ? "*" : ""}
           {props.hint && (
             <div className="hint">
-              {props.skipHintTranslation
-                ? props.hint
-                : t(props.hint + ".message")}
+              {props.skipHintTranslation ? props.hint : t(props.hint)}
             </div>
           )}
         </div>
@@ -97,7 +93,7 @@ const InputComponent = React.forwardRef((props: InputProps, ref: any) => {
               props.placeholder
                 ? props.skipPlaceholderTranslation
                   ? props.placeholder
-                  : t(props.placeholder + ".message")
+                  : t(props.placeholder)
                 : ""
             } ${props.required ? "*" : ""}`}
             value={props.value}

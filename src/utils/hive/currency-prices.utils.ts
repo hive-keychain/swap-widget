@@ -1,31 +1,15 @@
-// import { LocalStorageKeyEnum } from '@reference-data/local-storage-key.enum';
-// import LocalStorageUtils from 'src/utils/localStorage.utils';
 import { KeychainApi } from "@api/keychain";
 import Logger from "@utils/logger.utils";
-//TODO cleanup
+
 const getPrices = async () => {
   let prices;
   try {
     prices = await KeychainApi.get("hive/v2/price");
-    // if (prices) {
-    //   await LocalStorageUtils.saveValueInLocalStorage(
-    //     LocalStorageKeyEnum.LAST_PRICE,
-    //     prices,
-    //   );
-    // } else {
-    //   Logger.error('Cannot fetch prices from API. Using last known price...');
-    //   prices = await LocalStorageUtils.getValueFromLocalStorage(
-    //     LocalStorageKeyEnum.LAST_PRICE,
-    //   );
-    // }
   } catch (err) {
     Logger.error(
       "Cannot fetch prices from API. Using last known price...",
       err
     );
-    // prices = await LocalStorageUtils.getValueFromLocalStorage(
-    //   LocalStorageKeyEnum.LAST_PRICE,
-    // );
   } finally {
     return prices ?? {};
   }

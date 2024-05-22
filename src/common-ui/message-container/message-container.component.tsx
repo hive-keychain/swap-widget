@@ -70,15 +70,14 @@ const MessageContainer = ({
         <div
           className="message"
           dangerouslySetInnerHTML={{
-            //TODO bellow see how to add , message.params
-            __html: t(message.key),
+            __html: t(message.key, message.params),
           }}
         ></div>
         <ButtonComponent
           additionalClass={
             message.type === MessageType.SUCCESS ? "success-button" : ""
           }
-          label="message_container_close_button"
+          label="message_container_close_button.message"
           onClick={close}
         />
       </div>

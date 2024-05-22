@@ -320,9 +320,9 @@ const TokenSwaps = ({
     } catch (err: any) {
       setEstimate(undefined);
       setMessage({
-        key: err.reason.template + ".message",
+        key: err.message,
         type: MessageType.ERROR,
-        params: err.reason.params,
+        skipTranslation: true,
       });
     } finally {
       setLoadingEstimate(false);

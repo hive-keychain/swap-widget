@@ -70,7 +70,9 @@ const MessageContainer = ({
         <div
           className="message"
           dangerouslySetInnerHTML={{
-            __html: t(message.key, message.params),
+            __html: message.skipTranslation
+              ? message.key
+              : t(message.key, message.params),
           }}
         ></div>
         <ButtonComponent

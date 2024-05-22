@@ -328,7 +328,7 @@ const TokenSwaps = ({
       setMessage({
         key: "swap_min_slippage_error.message",
         type: MessageType.ERROR,
-        params: [swapConfig.slippage.min.toString()],
+        params: { min: swapConfig.slippage.min.toString() },
       });
       return;
     }
@@ -376,6 +376,14 @@ const TokenSwaps = ({
 
     setStep(2);
     const keychain = new KeychainSDK(window);
+    if (!(await keychain.isKeychainInstalled())) {
+      setMessage({
+        type: MessageType.ERROR,
+        key: "swap_widget_keychain_not_detected.message",
+      });
+      await goBack();
+      return;
+    }
     try {
       setWaitingForKeychainResponse(true);
       const swapMessage: any = await keychain.swap.start({
@@ -685,7 +693,7 @@ const TokenSwaps = ({
             <CustomTooltip
               color="grey"
               message={t("popup_html_copy_swap_id_tooltip_text.message")}
-              position={"top"}
+              position={"bottom"}
             >
               <div
                 className="caption id swap-status"

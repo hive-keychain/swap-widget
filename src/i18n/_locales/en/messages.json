@@ -3692,7 +3692,7 @@
     "description": "Operation impossible because not enough volume"
   },
   "swap_min_slippage_error": {
-    "message": "The slippage should be at least $1%",
+    "message": "The slippage should be at least {{min}}%",
     "description": "Minimum slippage error"
   },
   "swap_caption": {
@@ -3762,6 +3762,10 @@
   "swap_layer_two_delayed": {
     "message": "Hive Engine is currently behind blocks. The swap might take longer than usual and has a bigger chance of aborting due to slippage.",
     "description": "When layer two is delayed"
+  },
+  "swap_widget_keychain_not_detected": {
+    "message": "Keychain extension not detected. Please enable if it is installed or visit <a href='https://hive-keychain.com/' target='__blank'>Official Download section</a>.</></li></ul> to install & reload the app.",
+    "description": "When trying to start a swap using the widget"
   },
   "swap_min_hive_value_error": {
     "message": "Minimum value should be equivalent to 1 HIVE (currently $1 HIVE)",

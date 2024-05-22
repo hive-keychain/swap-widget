@@ -13,6 +13,7 @@ import InputComponent from "@common-ui/input/input.component";
 import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
 import ServiceUnavailablePage from "@common-ui/service-unavailable-page/service-unavailable-page.component";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
+import { TokenSwapsHistoryItemComponent } from "@components/token-swaps-history/token-swaps-history-item/token-swaps-history-item.component";
 import Config from "@configFile";
 import { ActiveAccount } from "@interfaces/active-account.interface";
 import { CurrencyPrices } from "@interfaces/bittrex.interface";
@@ -675,9 +676,11 @@ const TokenSwaps = ({
     } else if (step === 2) {
       return waitingForKeychainResponse ? (
         <div className="token-swaps loading-swap-status">
-          <div className="rotating-logo-wrapper">
-            <RotatingLogoComponent />
-          </div>
+          {currentSwapStatus?.status !== SwapStatus.COMPLETED && (
+            <div className="rotating-logo-wrapper swap-status">
+              <RotatingLogoComponent />
+            </div>
+          )}
           {currentSwapId && (
             <CustomTooltip
               color="grey"
@@ -708,11 +711,13 @@ const TokenSwaps = ({
                   t
                 )}
               </div>
+              <TokenSwapsHistoryItemComponent swap={currentSwapStatus} />
               {currentSwapStatus.status === SwapStatus.COMPLETED && (
                 <ButtonComponent
                   type={ButtonType.IMPORTANT}
                   label="html_popup_next_swap_transaction.message"
                   onClick={finishSwap}
+                  additionalClass="swap-status"
                 />
               )}
             </div>

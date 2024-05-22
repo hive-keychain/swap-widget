@@ -13,12 +13,10 @@ interface Props {
 
 const TokenSwapsHistoryItem = ({ swap }: Props) => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const copyIdToCliplboard = (id: string) => {
     navigator.clipboard.writeText(id.toString());
-    //TODO when usin check & pass setMessage.
-    // setInfoMessage('swap_copied_to_clipboard');
   };
   const getStatusMessage = (
     status: ISwap["status"],

@@ -6,15 +6,17 @@
   flex-flow: column wrap;
 
   &.loading-swap-status {
-    height: 80%;
+    height: 100%;
     flex: unset;
-    flex-direction: column;
+    flex-direction: column !important;
+    flex-flow: unset;
+    overflow: unset;
   }
 
   .swap-status-container {
     display: flex;
     flex-direction: column;
-    padding: 0 48px;
+    padding: 0 40px;
     justify-content: center;
     align-items: center;
   }
@@ -23,7 +25,7 @@
     @include caption();
     margin-top: 16px;
     &.swap-status {
-      margin-top: 0px;
+      margin-top: 16px;
       margin-bottom: 8px;
       text-align: center;
     }

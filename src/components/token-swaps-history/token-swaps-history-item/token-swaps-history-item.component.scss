@@ -4,6 +4,7 @@
   row-gap: 12px;
   @include small-card-no-padding();
   color: var(--main-font-color);
+  margin: 0px;
 
   .expand-panel {
     &.opened {

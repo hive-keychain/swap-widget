@@ -383,11 +383,18 @@ const TokenSwaps = ({
     }
 
     setStep(2);
-    const runningOnIFrame = checkIfIframe();
-    const keychain = new KeychainSDK(
-      runningOnIFrame ? global.window.parent : window
-    );
-    console.log({ w: window, wP: global.window.parent, runningOnIFrame }); //TODO remove line
+    console.log("Before setting SDK", {
+      top: window.top,
+      window,
+      wP: window.parent,
+      dR: document.referrer,
+    }); //TODO remove line
+    if (checkIfIframe()) {
+      var firstFrame = document.getElementsByTagName("iframe");
+      console.log({ firstFrame }); //TODO remove line
+    }
+    const keychain = new KeychainSDK(checkIfIframe() ? window.top! : window);
+    console.log({ keychainInstalled: await keychain.isKeychainInstalled() }); //TODO remove line
     if (!(await keychain.isKeychainInstalled())) {
       setMessage({
         type: MessageType.ERROR,

@@ -15,6 +15,10 @@ module.exports = {
   devtool: "inline-source-map",
   devServer: {
     static: "./dist",
+    headers: {
+      "Content-Security-Policy":
+        "frame-ancestors 'self' http://localhost:5500/ http://127.0.0.1:5500/ http://* https://* chrome-extension://*;default-src 'self' 'unsafe-inline' http://* https://* chrome-extension://*; frame-src 'self' 'unsafe-inline' http://* https://* chrome-extension://*; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' http://* https://* chrome-extension://*;",
+    },
   },
   module: {
     rules: [

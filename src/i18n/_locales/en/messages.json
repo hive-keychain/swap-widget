@@ -3463,8 +3463,8 @@
     "message": "Swap",
     "description": "Token swaps : process"
   },
-  "html_popup_swap_in_process": {
-    "message": "Swap in Process",
+  "html_popup_swap_in_progress": {
+    "message": "Swap in Progress",
     "description": "Widget swaps : processing"
   },
   "html_popup_swaps_documentation_message": {

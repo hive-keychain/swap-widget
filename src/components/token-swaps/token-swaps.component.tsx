@@ -718,7 +718,7 @@ const TokenSwaps = ({
           )}
           {!currentSwapStatus && (
             <div className="caption swap-status">
-              {t("html_popup_swap_in_process.message")}...
+              {t("html_popup_swap_in_progress.message")}...
             </div>
           )}
           {currentSwapStatus && (

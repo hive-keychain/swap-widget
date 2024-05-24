@@ -100,7 +100,6 @@ export const App = () => {
     const currentUrl = window.location.href;
     const searchParams = new URLSearchParams(currentUrl.split("?")[1]);
     const lastUsed = SwapTokenUtils.getLastUsed();
-    console.log({ lastUsed }); //TODO remove line
     if (searchParams.size > 0) {
       for (const p of searchParams) {
         if (!tempFormParams.hasOwnProperty(p[0])) {

@@ -506,18 +506,6 @@ const TokenSwaps = ({
     reloadApp();
   };
 
-  const getShortenedId = (id: string) => {
-    return id.substring(0, 6) + "..." + id.slice(-6);
-  };
-
-  const copyIdToClipboard = (id: string) => {
-    navigator.clipboard.writeText(id.toString());
-    setMessage({
-      type: MessageType.INFO,
-      key: "swap_copied_to_clipboard.message",
-    });
-  };
-
   const renderPage = () => {
     if (step === 1) {
       if (loading)

@@ -8,7 +8,7 @@
     "start": "webpack-dev-server --open --mode development --hot",
     "build": "webpack --mode production",
     "predeploy": "npm run build",
-    "deploy": "echo 'swapwidget.hive-keychain.com' > ./build/CNAME && gh-pages -d build"
+    "deploy": "echo 'swapwidget.hive-keychain.com' > ./dist/CNAME && gh-pages -d dist"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
     "crypto",
     "crypto-currency"
   ],
-  "author": "Keychain LTD @theghost1980",
+  "author": "Hive Keychain LTD @theghost1980",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/hive-keychain/swap-widget/issues"

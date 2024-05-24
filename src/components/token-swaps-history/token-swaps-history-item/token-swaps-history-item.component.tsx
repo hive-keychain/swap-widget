@@ -114,11 +114,6 @@ const TokenSwapsHistoryItem = ({ swap, setMessage }: Props) => {
               )}{" "}
             {swap.endToken}
           </div>
-          <SVGIcon
-            icon={SVGIcons.SWAPS_EXPAND}
-            className={`expand-panel ${isOpen ? "opened" : "closed"}`}
-            onClick={() => setIsOpen(!isOpen)}
-          />
           <CustomTooltip
             position="left"
             skipTranslation

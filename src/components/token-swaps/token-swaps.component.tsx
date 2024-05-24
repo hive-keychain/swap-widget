@@ -701,21 +701,6 @@ const TokenSwaps = ({
               <RotatingLogoComponent />
             </div>
           )}
-          {currentSwapId && (
-            <CustomTooltip
-              color="grey"
-              message={t("popup_html_copy_swap_id_tooltip_text.message")}
-              position={"bottom"}
-            >
-              <div
-                className="caption id swap-status"
-                onClick={() => copyIdToClipboard(currentSwapId)}
-              >
-                {t("html_popup_swap_swap_id.message")}:{" "}
-                {getShortenedId(currentSwapId)}
-              </div>
-            </CustomTooltip>
-          )}
           {!currentSwapStatus && (
             <div className="caption swap-status">
               {t("html_popup_swap_in_progress.message")}...
@@ -731,7 +716,10 @@ const TokenSwaps = ({
                   t
                 )}
               </div>
-              <TokenSwapsHistoryItemComponent swap={currentSwapStatus} />
+              <TokenSwapsHistoryItemComponent
+                setMessage={(value) => setMessage(value)}
+                swap={currentSwapStatus}
+              />
               {currentSwapStatus.status === SwapStatus.COMPLETED && (
                 <ButtonComponent
                   type={ButtonType.IMPORTANT}

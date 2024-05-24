@@ -1,6 +1,8 @@
 import { CustomTooltip } from "@common-ui/custom-tooltip/custom-tooltip.component";
 import { SVGIcons } from "@common-ui/icons.enum";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
+import { Message } from "@interfaces/message.interface";
+import { MessageType } from "@reference-data/message-type.enum";
 import FormatUtils from "@utils/format.utils";
 import { ISwap, SwapStatus } from "hive-keychain-commons";
 import moment from "moment";
@@ -9,14 +11,19 @@ import { useTranslation } from "react-i18next";
 
 interface Props {
   swap: ISwap;
+  setMessage: (value: Message) => void;
 }
 
-const TokenSwapsHistoryItem = ({ swap }: Props) => {
+const TokenSwapsHistoryItem = ({ swap, setMessage }: Props) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
 
   const copyIdToCliplboard = (id: string) => {
     navigator.clipboard.writeText(id.toString());
+    setMessage({
+      type: MessageType.INFO,
+      key: "swap_copied_to_clipboard.message",
+    });
   };
   const getStatusMessage = (
     status: ISwap["status"],

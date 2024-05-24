@@ -4,7 +4,6 @@
 import { SVGIcons } from "@common-ui/icons.enum";
 import RotatingLogoComponent from "@common-ui/rotating-logo/rotating-logo.component";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
-import { TokenSwapsHistoryItemComponent } from "@components/token-swaps-history/token-swaps-history-item/token-swaps-history-item.component";
 import Config from "@configFile";
 import { ActiveAccount } from "@interfaces/active-account.interface";
 import { SwapTokenUtils } from "@utils/swap-token.utils";
@@ -97,10 +96,12 @@ const TokenSwapsHistory = ({ activeAccount }: Props) => {
         {history.length > 0 &&
           history.map((item, index) => {
             return (
-              <TokenSwapsHistoryItemComponent
-                key={`item-${index}`}
-                swap={item}
-              />
+              // TODO remove component if not needed at all
+              // <TokenSwapsHistoryItemComponent
+              //   key={`item-${index}`}
+              //   swap={item}
+              // />
+              null
             );
           })}
         {history.length === 0 && (

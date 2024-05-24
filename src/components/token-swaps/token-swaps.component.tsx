@@ -696,7 +696,7 @@ const TokenSwaps = ({
     } else if (step === 2) {
       return waitingForKeychainResponse ? (
         <div className="token-swaps loading-swap-status">
-          {currentSwapStatus?.status !== SwapStatus.COMPLETED && (
+          {!currentSwapId && (
             <div className="rotating-logo-wrapper swap-status">
               <RotatingLogoComponent />
             </div>

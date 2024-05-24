@@ -2517,6 +2517,10 @@
     "message": "An error occured while retrieving the tokens market from HIVE. Please try again later.",
     "description": "Error while retrieving witness ranking, hivesql not down"
   },
+  "popup_html_error_retrieving_currency_prices": {
+    "message": "An error occured while retrieving the currency prices. Please try again later.",
+    "description": "Error while retrieving witness ranking, hivesql not down"
+  },
   "popup_html_error_retrieving_witness_information": {
     "message": "An error occured while retrieving the witness account information. Please try again later.",
     "description": "Error while retrieving witness information, hivesql not down"
@@ -3707,12 +3711,16 @@
     "message": "Username is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
     "description": "Swap widget error message"
   },
+  "swap_widget_missing_partnerUsername_param": {
+    "message": "Partner Username is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
+    "description": "Swap widget error message"
+  },
   "swap_widget_missing_partnerFee_param": {
     "message": "Partner Fee is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
     "description": "Swap widget error message"
   },
   "swap_widget_partnerFee_error_out_limits": {
-    "message": "Partner Fee must be greated than 0 but less that {{maxPartnerFeePercentage}}. Please contact development support of the website using the Keychain Swap Widget!",
+    "message": "Partner Fee must be between 0% and {{maxPartnerFeePercentage}}%. Please contact development support of the website using the Keychain Swap Widget!",
     "description": "Swap widget error message"
   },
   "swap_no_token": {

@@ -11,6 +11,7 @@
   left: 0;
   background: var(--background-color);
   z-index: 99;
+  border-radius: 48px;
 
   .logo {
     z-index: 2;
@@ -21,6 +22,7 @@
     width: 100%;
     position: fixed;
     background-color: var(--background-color);
+    border-radius: 48px;
 
     & > div {
       width: 100%;

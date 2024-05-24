@@ -406,8 +406,8 @@ const TokenSwaps = ({
         slippage: getFormParams().slipperage,
         steps: estimate,
       });
-      console.log({ swapMessage }); //TODO remove line
       if (swapMessage.success) {
+        SwapTokenUtils.saveLastUsed(startToken?.value, endToken?.value);
         setCurrentSwapId(swapMessage.result.swap_id);
         const tempSwapStatus = await SwapTokenUtils.getSwapStatus(
           swapMessage.result.swap_id

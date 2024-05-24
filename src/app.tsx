@@ -50,6 +50,23 @@ export const App = () => {
   //  - iframe with dynamic params.
   //  - code of the iframe. with dynamic params.
 
+  const interruptLoadingWithError = (
+    key_error: string,
+    loggerTitle: string,
+    e: any,
+    params?: {}
+  ) => {
+    setLoading(false);
+    setMessage({
+      type: MessageType.ERROR,
+      key: key_error,
+      params,
+    });
+    Logger.log(loggerTitle, (e as any).toString());
+    setMissingParams(true);
+    return;
+  };
+
   const init = async () => {
     setLoading(true);
     //currencyPrices
@@ -57,7 +74,11 @@ export const App = () => {
       const tempPrices = await CurrencyPricesUtils.getPrices();
       setPrices(tempPrices);
     } catch (e) {
-      Logger.error("currency price error", (e as any).toString());
+      interruptLoadingWithError(
+        "popup_html_error_retrieving_currency_prices.message",
+        "currencyPrices error",
+        e
+      );
     }
     //tokenMarket
     try {
@@ -69,13 +90,11 @@ export const App = () => {
       );
       setTokenMarket(tempTokensMarket);
     } catch (error) {
-      setMessage({
-        type: MessageType.ERROR,
-        key: "popup_html_error_retrieving_tokens_market.message",
-      });
-      setMissingParams(true);
-      Logger.error("tokensMarket error", (error as any).toString());
-      return;
+      interruptLoadingWithError(
+        "popup_html_error_retrieving_tokens_market.message",
+        "tokensMarket error",
+        error
+      );
     }
     let tempFormParams: GenericObjectStringKeyPair = {};
     const currentUrl = window.location.href;
@@ -101,29 +120,32 @@ export const App = () => {
       });
       tempFormParams["username"] = lastUsed.from.account;
     } else {
-      Logger.log("Missing URL params!");
       setTimeout(() => {
-        setLoading(false);
-        setMessage({
-          type: MessageType.ERROR,
-          key: "swap_widget_missing_username_param.message",
-        });
-        setMissingParams(true);
+        interruptLoadingWithError(
+          "swap_widget_missing_username_param.message",
+          "No URL params found!",
+          new Error("Please contact the website using the widget!")
+        );
       }, 1000);
       return;
     }
 
     //partnerFee validation
     if (tempFormParams.partnerUsername && !tempFormParams.partnerFee) {
-      Logger.log("Missing partnerFee in URL request!");
-      //TODO bellow refactor using one function as it is repetitive
-      setLoading(false);
-      setMessage({
-        type: MessageType.ERROR,
-        key: "swap_widget_missing_partnerFee_param.message",
-      });
-      setMissingParams(true);
-      return;
+      interruptLoadingWithError(
+        "swap_widget_missing_partnerFee_param.message",
+        "Missing partnerFee in URL!",
+        new Error("Please contact website using the widget!")
+      );
+    }
+    if (
+      !(await AccountUtils.doesAccountExist(tempFormParams.partnerUsername))
+    ) {
+      interruptLoadingWithError(
+        "swap_widget_missing_partnerUsername_param.message",
+        "Hive Account not found!, please check",
+        new Error("Hive account not found!")
+      );
     }
 
     if (await AccountUtils.doesAccountExist(tempFormParams.username)) {
@@ -134,17 +156,15 @@ export const App = () => {
           Number(tempFormParams.partnerFee) >
             Config.swaps.swapWidget.maxPartnerFeePercentage)
       ) {
-        setLoading(false);
-        setMessage({
-          type: MessageType.ERROR,
-          key: "swap_widget_partnerFee_error_out_limits.message",
-          params: {
+        interruptLoadingWithError(
+          "swap_widget_partnerFee_error_out_limits.message",
+          "partnerFee outbounderies, please check documentation!",
+          new Error("Please contact website using widget!"),
+          {
             maxPartnerFeePercentage:
               Config.swaps.swapWidget.maxPartnerFeePercentage,
-          },
-        });
-        setMissingParams(true);
-        return;
+          }
+        );
       }
       setActiveAccount({
         name: tempFormParams.username,
@@ -153,14 +173,11 @@ export const App = () => {
         rc: (await AccountUtils.getRCMana(tempFormParams.username)) as RC,
       });
     } else {
-      Logger.log("Account not found in HIVE. Missing param", {
-        username: tempFormParams.username,
-      });
-      setMessage({
-        type: MessageType.ERROR,
-        key: "swap_widget_missing_username_param.message",
-      });
-      setMissingParams(true);
+      interruptLoadingWithError(
+        "swap_widget_missing_username_param.message",
+        "Hive Account not found!, please check",
+        new Error("Hive account not found!")
+      );
     }
     setLoading(false);
   };

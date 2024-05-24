@@ -38,8 +38,11 @@ export const App = () => {
     init();
   }, []);
 
-  //TODO
+  //TODO cleanup comments when finished
   //  //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slipperage=5&theme=light
+  //  imporant, needed for the swap-widget the PR to be merged bellow:
+  //    1. extension -> dev:  https://github.com/hive-keychain/hive-keychain-extension/pull/502
+  //    2. sdk -> master:     https://github.com/hive-keychain/keychain-sdk/pull/2
 
   //  Playground:
   //  - form with params.

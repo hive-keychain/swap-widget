@@ -383,18 +383,7 @@ const TokenSwaps = ({
     }
 
     setStep(2);
-    console.log("Before setting SDK", {
-      top: window.top,
-      window,
-      wP: window.parent,
-      dR: document.referrer,
-    }); //TODO remove line
-    if (checkIfIframe()) {
-      var firstFrame = document.getElementsByTagName("iframe");
-      console.log({ firstFrame }); //TODO remove line
-    }
-    const keychain = new KeychainSDK(checkIfIframe() ? window.top! : window);
-    console.log({ keychainInstalled: await keychain.isKeychainInstalled() }); //TODO remove line
+    const keychain = new KeychainSDK(window);
     if (!(await keychain.isKeychainInstalled())) {
       setMessage({
         type: MessageType.ERROR,
@@ -413,11 +402,11 @@ const TokenSwaps = ({
         slippage: getFormParams().slipperage,
         steps: estimate,
       });
-
+      console.log({ swapMessage }); //TODO remove line
       if (swapMessage.success) {
-        setCurrentSwapId(swapMessage.data.swapId);
+        setCurrentSwapId(swapMessage.result.swap_id);
         const tempSwapStatus = await SwapTokenUtils.getSwapStatus(
-          swapMessage.data.swapId
+          swapMessage.result.swap_id
         );
         if (tempSwapStatus) setCurrentSwapStatus(tempSwapStatus);
       }

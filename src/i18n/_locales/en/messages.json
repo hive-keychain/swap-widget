@@ -3468,7 +3468,7 @@
     "description": "Widget swaps : processing"
   },
   "html_popup_swaps_documentation_message": {
-    "message": "Please check our Playground to learn how to properly use it. <a target='__blank' href='https://hive-keychain.com/#/terms'>//TODO add link to playground</a>",
+    "message": "Please check our Playground to learn how to properly use the widget. <a target='__blank' href='https://hive-keychain.com/#/terms'>//TODO add link to playground</a>",
     "description": "swap widget: wrong partner username param"
   },
   "html_popup_swaps_final_price": {
@@ -3703,9 +3703,17 @@
     "message": "In order to proceed with the swap, please input a valid HIVE username.",
     "description": "Caption"
   },
-  "swap_widget_missing_param": {
-    "message": "PartnerUsername is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
-    "description": "Caption"
+  "swap_widget_missing_username_param": {
+    "message": "Username is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
+    "description": "Swap widget error message"
+  },
+  "swap_widget_missing_partnerFee_param": {
+    "message": "Partner Fee is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
+    "description": "Swap widget error message"
+  },
+  "swap_widget_partnerFee_error_out_limits": {
+    "message": "Partner Fee must be greated than 0 but less that {{maxPartnerFeePercentage}}. Please contact development support of the website using the Keychain Swap Widget!",
+    "description": "Swap widget error message"
   },
   "swap_no_token": {
     "message": "You don't have any HIVE, HBD or Hive-Engine token to swap at the moment.",

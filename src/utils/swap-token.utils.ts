@@ -186,6 +186,14 @@ const setAsInitiated = async (swapId: ISwap["id"]) => {
   }
 };
 
+const checkIfRunningInIframe = (currentWindow: Window & typeof globalThis) => {
+  try {
+    return currentWindow.self !== currentWindow.top;
+  } catch (e) {
+    return true;
+  }
+};
+
 const getStatusMessage = (
   status: ISwap["status"],
   transferInitiated: boolean,
@@ -223,4 +231,5 @@ export const SwapTokenUtils = {
   setAsInitiated,
   getSwapStatus,
   getStatusMessage,
+  checkIfRunningInIframe,
 };

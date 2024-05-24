@@ -79,6 +79,8 @@ const TokenSwaps = ({
     useState(false);
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
   const [currentSwapId, setCurrentSwapId] = useState<string>();
+  const [partnerUsername, setPartnerUsername] = useState<string>();
+  const [partnerFee, setPartnerFee] = useState<number>();
 
   const { t } = useTranslation();
 
@@ -167,6 +169,13 @@ const TokenSwaps = ({
         }
         if (formParams.hasOwnProperty("slipperage")) {
           setSlippage(Number(formParams.slipperage));
+        }
+        if (
+          formParams.hasOwnProperty("partnerUsername") &&
+          formParams.hasOwnProperty("partnerFee")
+        ) {
+          setPartnerUsername(formParams.partnerUsername);
+          setPartnerFee(Number(formParams.partnerFee));
         }
       }
     }
@@ -310,14 +319,6 @@ const TokenSwaps = ({
     }
   };
 
-  const checkIfIframe = () => {
-    try {
-      return window.self !== window.top;
-    } catch (e) {
-      return true;
-    }
-  };
-
   const goBack = async (estimateId?: string) => {
     if (estimateId) await SwapTokenUtils.cancelSwap(estimateId);
     setStep(1);
@@ -394,6 +395,9 @@ const TokenSwaps = ({
     }
     try {
       setWaitingForKeychainResponse(true);
+      //TODO bellow when enabled in BE:
+      //  pass:
+      //    - partnerUsername & partnerFee
       const swapMessage: any = await keychain.swap.start({
         username: getFormParams().username,
         startToken: getFormParams().startToken!.value.symbol,
@@ -446,6 +450,8 @@ const TokenSwaps = ({
       amount: amount,
       slipperage: Number(slippage),
       username: activeAccount.name!,
+      partnerUsername: partnerUsername,
+      partnerFee: partnerFee,
     };
   };
 

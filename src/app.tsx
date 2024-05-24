@@ -3,6 +3,7 @@ import { MessageContainerComponent } from "@common-ui/message-container/message-
 import { SplashscreenComponent } from "@common-ui/splashscreen/splashscreen.component";
 import { SVGIcon } from "@common-ui/svg-icon/svg-icon.component";
 import { TokenSwapsComponent } from "@components/token-swaps/token-swaps.component";
+import Config from "@configFile";
 import { ActiveAccount, RC } from "@interfaces/active-account.interface";
 import { CurrencyPrices } from "@interfaces/bittrex.interface";
 import { Message } from "@interfaces/message.interface";
@@ -39,7 +40,7 @@ export const App = () => {
   }, []);
 
   //TODO cleanup comments when finished
-  //  //http://localhost:8080/?partnerUsername=theghost1980&from=hbd&to=hive&slipperage=5&theme=light
+  //  //http://localhost:8080/?username=theghost1980&from=hive&to=hbd&slipperage=5&theme=light&partnerUsername=sexosentido
   //  imporant, needed for the swap-widget the PR to be merged bellow:
   //    1. extension -> dev:  https://github.com/hive-keychain/hive-keychain-extension/pull/502
   //    2. sdk -> master:     https://github.com/hive-keychain/keychain-sdk/pull/2
@@ -80,6 +81,7 @@ export const App = () => {
     const currentUrl = window.location.href;
     const searchParams = new URLSearchParams(currentUrl.split("?")[1]);
     const lastUsed = SwapTokenUtils.getLastUsed();
+    console.log({ lastUsed }); //TODO remove line
     if (searchParams.size > 0) {
       for (const p of searchParams) {
         if (!tempFormParams.hasOwnProperty(p[0])) {
@@ -95,40 +97,68 @@ export const App = () => {
         setTheme(tempFormParams.theme as Theme);
     } else if (lastUsed && lastUsed.from && lastUsed.from.account) {
       setFormParams({
-        partnerUsername: lastUsed.from.account,
+        username: lastUsed.from.account,
       });
-      tempFormParams["partnerUsername"] = lastUsed.from.account;
+      tempFormParams["username"] = lastUsed.from.account;
     } else {
       Logger.log("Missing URL params!");
       setTimeout(() => {
         setLoading(false);
         setMessage({
           type: MessageType.ERROR,
-          key: "swap_widget_missing_param.message",
+          key: "swap_widget_missing_username_param.message",
         });
         setMissingParams(true);
       }, 1000);
       return;
     }
 
-    if (await AccountUtils.doesAccountExist(tempFormParams.partnerUsername)) {
+    //partnerFee validation
+    if (tempFormParams.partnerUsername && !tempFormParams.partnerFee) {
+      Logger.log("Missing partnerFee in URL request!");
+      //TODO bellow refactor using one function as it is repetitive
+      setLoading(false);
+      setMessage({
+        type: MessageType.ERROR,
+        key: "swap_widget_missing_partnerFee_param.message",
+      });
+      setMissingParams(true);
+      return;
+    }
+
+    if (await AccountUtils.doesAccountExist(tempFormParams.username)) {
+      //min partnerFee validation.
+      if (
+        tempFormParams.partnerFee &&
+        (Number(tempFormParams.partnerFee) <= 0 ||
+          Number(tempFormParams.partnerFee) >
+            Config.swaps.swapWidget.maxPartnerFeePercentage)
+      ) {
+        setLoading(false);
+        setMessage({
+          type: MessageType.ERROR,
+          key: "swap_widget_partnerFee_error_out_limits.message",
+          params: {
+            maxPartnerFeePercentage:
+              Config.swaps.swapWidget.maxPartnerFeePercentage,
+          },
+        });
+        setMissingParams(true);
+        return;
+      }
       setActiveAccount({
-        name: tempFormParams.partnerUsername,
-        account: await AccountUtils.getExtendedAccount(
-          tempFormParams.partnerUsername
-        ),
+        name: tempFormParams.username,
+        account: await AccountUtils.getExtendedAccount(tempFormParams.username),
         keys: {},
-        rc: (await AccountUtils.getRCMana(
-          tempFormParams.partnerUsername
-        )) as RC,
+        rc: (await AccountUtils.getRCMana(tempFormParams.username)) as RC,
       });
     } else {
       Logger.log("Account not found in HIVE. Missing param", {
-        username: tempFormParams.partnerUsername,
+        username: tempFormParams.username,
       });
       setMessage({
         type: MessageType.ERROR,
-        key: "swap_widget_missing_param.message",
+        key: "swap_widget_missing_username_param.message",
       });
       setMissingParams(true);
     }

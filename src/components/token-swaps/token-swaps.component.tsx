@@ -27,7 +27,7 @@ import TokensUtils from "@utils/hive/tokens.utils";
 import Logger from "@utils/logger.utils";
 import { SwapTokenUtils } from "@utils/swap-token.utils";
 import { IStep, ISwap, SwapStatus } from "hive-keychain-commons";
-import { KeychainSDK } from "keychain-sdk";
+import { KeychainSDK, Swap } from "keychain-sdk";
 import { ThrottleSettings, throttle } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -395,7 +395,6 @@ const TokenSwaps = ({
     }
     try {
       setWaitingForKeychainResponse(true);
-      //TODO bellow when enabled in BE:
       //  pass:
       //    - partnerUsername & partnerFee
       const swapMessage: any = await keychain.swap.start({
@@ -405,7 +404,10 @@ const TokenSwaps = ({
         amount: Number(getFormParams().amount),
         slippage: getFormParams().slipperage,
         steps: estimate,
-      });
+        //TODO bellow when enabled in BE, uncomment:
+        // partnerUsername: getFormParams().partnerUsername,
+        // partnerFee: getFormParams().partnerFee
+      } as Swap);
       if (swapMessage.success) {
         SwapTokenUtils.saveLastUsed(startToken?.value, endToken?.value);
         setCurrentSwapId(swapMessage.result.swap_id);

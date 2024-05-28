@@ -45,6 +45,10 @@ export const App = () => {
   //    1. extension -> dev:  https://github.com/hive-keychain/hive-keychain-extension/pull/502
   //    2. sdk -> master:     https://github.com/hive-keychain/keychain-sdk/pull/2
 
+  //TODO
+  //  1. double check & remove the npm link.
+  //  2. add playground link in messages.
+
   //  Playground:
   //  - form with params.
   //  - iframe with dynamic params.

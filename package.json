@@ -8,7 +8,7 @@
     "start": "webpack-dev-server --open --mode development --hot",
     "build": "webpack --mode production",
     "predeploy": "npm run build",
-    "deploy": "echo 'swapwidget.hive-keychain.com' > ./dist/CNAME && gh-pages -d dist"
+    "deploy": "echo swapwidget.hive-keychain.com > ./dist/CNAME && gh-pages -d dist"
   },
   "repository": {
     "type": "git",

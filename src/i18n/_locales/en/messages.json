@@ -3459,7 +3459,7 @@
     "message": "Swaps",
     "description": "Token swaps"
   },
-  "html_popup_swaps_slipperage": {
+  "html_popup_swaps_slippage": {
     "message": "Slippage",
     "description": "Token swaps : Slippage"
   },
@@ -3472,7 +3472,7 @@
     "description": "Widget swaps : processing"
   },
   "html_popup_swaps_documentation_message": {
-    "message": "Please check our Playground to learn how to properly use the widget. <a target='__blank' href='https://hive-keychain.com/#/terms'>//TODO add link to playground</a>",
+    "message": "Please check our Playground to learn how to properly use the widget. <a target='__blank' href='https://play.hive-keychain.com/#/swap-widget/'>Swap Widget Playground</a>",
     "description": "swap widget: wrong partner username param"
   },
   "html_popup_swaps_final_price": {
@@ -3696,7 +3696,7 @@
     "description": "Operation impossible because not enough volume"
   },
   "swap_min_slippage_error": {
-    "message": "The slippage should be at least {{min}}%",
+    "message": "The slippage range should be {{min}}% - {{max}}%",
     "description": "Minimum slippage error"
   },
   "swap_caption": {

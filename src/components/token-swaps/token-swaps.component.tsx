@@ -167,8 +167,8 @@ const TokenSwaps = ({
         if (formParams.hasOwnProperty("amount")) {
           setAmount(formParams.amount);
         }
-        if (formParams.hasOwnProperty("slipperage")) {
-          setSlippage(Number(formParams.slipperage));
+        if (formParams.hasOwnProperty("slippage")) {
+          setSlippage(Number(formParams.slippage));
         }
         if (
           formParams.hasOwnProperty("partnerUsername") &&
@@ -333,11 +333,17 @@ const TokenSwaps = ({
       });
       return;
     }
-    if (slippage < swapConfig.slippage.min) {
+    if (
+      slippage < swapConfig.slippage.min ||
+      slippage > swapConfig.slippage.default
+    ) {
       setMessage({
         key: "swap_min_slippage_error.message",
         type: MessageType.ERROR,
-        params: { min: swapConfig.slippage.min.toString() },
+        params: {
+          min: swapConfig.slippage.min.toString(),
+          max: swapConfig.slippage.default,
+        },
       });
       return;
     }
@@ -395,14 +401,12 @@ const TokenSwaps = ({
     }
     try {
       setWaitingForKeychainResponse(true);
-      //  pass:
-      //    - partnerUsername & partnerFee
       const swapMessage: any = await keychain.swap.start({
         username: getFormParams().username,
         startToken: getFormParams().startToken!.value.symbol,
         endToken: getFormParams().endToken!.value.symbol,
         amount: Number(getFormParams().amount),
-        slippage: getFormParams().slipperage,
+        slippage: getFormParams().slippage,
         steps: estimate,
         //TODO bellow when enabled in BE, uncomment:
         // partnerUsername: getFormParams().partnerUsername,
@@ -450,7 +454,7 @@ const TokenSwaps = ({
       startToken: startToken,
       endToken: endToken,
       amount: amount,
-      slipperage: Number(slippage),
+      slippage: Number(slippage),
       username: activeAccount.name!,
       partnerUsername: partnerUsername,
       partnerFee: partnerFee,
@@ -656,8 +660,8 @@ const TokenSwaps = ({
                             step={1}
                             value={slippage}
                             onChange={setSlippage}
-                            label="html_popup_swaps_slipperage.message"
-                            placeholder="html_popup_swaps_slipperage.message"
+                            label="html_popup_swaps_slippage.message"
+                            placeholder="html_popup_swaps_slippage.message"
                           />
                         </div>
                       )}

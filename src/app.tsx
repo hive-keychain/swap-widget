@@ -39,21 +39,6 @@ export const App = () => {
     init();
   }, []);
 
-  //TODO cleanup comments when finished
-  //  //http://localhost:8080/?username=theghost1980&from=hive&to=hbd&slipperage=5&theme=light&partnerUsername=sexosentido
-  //  imporant, needed for the swap-widget the PR to be merged bellow:
-  //    1. extension -> dev:  https://github.com/hive-keychain/hive-keychain-extension/pull/502
-  //    2. sdk -> master:     https://github.com/hive-keychain/keychain-sdk/pull/2
-
-  //TODO
-  //  1. double check & remove the npm link.
-  //  2. add playground link in messages.
-
-  //  Playground:
-  //  - form with params.
-  //  - iframe with dynamic params.
-  //  - code of the iframe. with dynamic params.
-
   const interruptLoadingWithError = (
     key_error: string,
     loggerTitle: string,
@@ -117,41 +102,32 @@ export const App = () => {
           tempFormParams.theme === Theme.LIGHT)
       )
         setTheme(tempFormParams.theme as Theme);
-    } else if (lastUsed && lastUsed.from && lastUsed.from.account) {
-      setFormParams({
-        username: lastUsed.from.account,
-      });
-      tempFormParams["username"] = lastUsed.from.account;
-    } else {
-      setTimeout(() => {
+      //params validations.
+      //partnerFee && partnerUsername
+      if (tempFormParams.partnerUsername && !tempFormParams.partnerFee) {
         interruptLoadingWithError(
-          "swap_widget_missing_username_param.message",
-          "No URL params found!",
-          new Error("Please contact the website using the widget!")
+          "swap_widget_missing_partnerFee_param.message",
+          "Missing partnerFee in URL!",
+          new Error("Please contact website using the widget!")
         );
-      }, 1000);
-      return;
-    }
-
-    //partnerFee validation
-    if (tempFormParams.partnerUsername && !tempFormParams.partnerFee) {
-      interruptLoadingWithError(
-        "swap_widget_missing_partnerFee_param.message",
-        "Missing partnerFee in URL!",
-        new Error("Please contact website using the widget!")
-      );
-    }
-    if (
-      !(await AccountUtils.doesAccountExist(tempFormParams.partnerUsername))
-    ) {
-      interruptLoadingWithError(
-        "swap_widget_missing_partnerUsername_param.message",
-        "Hive Account not found!, please check",
-        new Error("Hive account not found!")
-      );
-    }
-
-    if (await AccountUtils.doesAccountExist(tempFormParams.username)) {
+      }
+      if (!tempFormParams.partnerUsername && tempFormParams.partnerFee) {
+        interruptLoadingWithError(
+          "swap_widget_missing_partnerUsername_param.message",
+          "Missing partnerUsername in URL!",
+          new Error("Please contact website using the widget!")
+        );
+      }
+      if (
+        tempFormParams.partnerUsername &&
+        !(await AccountUtils.doesAccountExist(tempFormParams.partnerUsername))
+      ) {
+        interruptLoadingWithError(
+          "swap_widget_missing_partnerUsername_param.message",
+          "Hive Account not found!, please check",
+          new Error("Hive account not found!")
+        );
+      }
       //min partnerFee validation.
       if (
         tempFormParams.partnerFee &&
@@ -169,6 +145,24 @@ export const App = () => {
           }
         );
       }
+      //end params validations
+    } else if (lastUsed && lastUsed.from && lastUsed.from.account) {
+      setFormParams({
+        username: lastUsed.from.account,
+      });
+      tempFormParams["username"] = lastUsed.from.account;
+    } else {
+      setTimeout(() => {
+        interruptLoadingWithError(
+          "swap_widget_missing_username_param.message",
+          "No URL params found!",
+          new Error("Please contact the website using the widget!")
+        );
+      }, 1000);
+      return;
+    }
+
+    if (await AccountUtils.doesAccountExist(tempFormParams.username)) {
       setActiveAccount({
         name: tempFormParams.username,
         account: await AccountUtils.getExtendedAccount(tempFormParams.username),

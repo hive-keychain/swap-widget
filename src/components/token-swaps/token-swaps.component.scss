@@ -25,9 +25,7 @@
 
   .caption {
     @include caption();
-    margin-top: 16px;
     &.swap-status {
-      margin-top: 16px;
       margin-bottom: 8px;
       text-align: center;
     }

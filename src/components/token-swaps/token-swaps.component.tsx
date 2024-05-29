@@ -408,9 +408,8 @@ const TokenSwaps = ({
         amount: Number(getFormParams().amount),
         slippage: getFormParams().slippage,
         steps: estimate,
-        //TODO bellow when enabled in BE, uncomment:
-        // partnerUsername: getFormParams().partnerUsername,
-        // partnerFee: getFormParams().partnerFee
+        partnerUsername: getFormParams().partnerUsername ?? undefined,
+        partnerFee: getFormParams().partnerFee ?? undefined,
       } as Swap);
       if (swapMessage.success) {
         SwapTokenUtils.saveLastUsed(startToken?.value, endToken?.value);

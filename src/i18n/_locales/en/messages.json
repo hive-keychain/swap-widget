@@ -3472,7 +3472,7 @@
     "description": "Widget swaps : processing"
   },
   "html_popup_swaps_documentation_message": {
-    "message": "Please check our Playground to learn how to properly use the widget. <a target='__blank' href='https://play.hive-keychain.com/#/swap-widget/'>Swap Widget Playground</a>",
+    "message": "Please check our <a target='__blank' href='https://play.hive-keychain.com/#/swap-widget/'>playground</a> to learn how to use the widget. Swap Widget Playground",
     "description": "swap widget: wrong partner username param"
   },
   "html_popup_swaps_final_price": {

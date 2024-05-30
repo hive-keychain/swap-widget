@@ -81,6 +81,7 @@ const TokenSwaps = ({
   const [currentSwapId, setCurrentSwapId] = useState<string>();
   const [partnerUsername, setPartnerUsername] = useState<string>();
   const [partnerFee, setPartnerFee] = useState<number>();
+  let swapHistoryInterval: string | number | NodeJS.Timeout | undefined;
 
   const { t } = useTranslation();
 
@@ -103,6 +104,7 @@ const TokenSwaps = ({
     init();
     return () => {
       throttledRefresh.cancel();
+      if (swapHistoryInterval) clearInterval(swapHistoryInterval);
     };
   }, []);
 
@@ -417,36 +419,30 @@ const TokenSwaps = ({
         const tempSwapStatus = await SwapTokenUtils.getSwapStatus(
           swapMessage.result.swap_id
         );
-        if (tempSwapStatus) setCurrentSwapStatus(tempSwapStatus);
+        if (tempSwapStatus) {
+          setCurrentSwapStatus(tempSwapStatus);
+          swapHistoryInterval = setInterval(async () => {
+            const tempCurrentSwapStatus = await SwapTokenUtils.getSwapStatus(
+              swapMessage.result.swap_id
+            );
+            setCurrentSwapStatus(tempCurrentSwapStatus);
+            if (
+              tempCurrentSwapStatus.status ===
+                SwapStatus.CANCELED_DUE_TO_ERROR ||
+              tempCurrentSwapStatus.status === SwapStatus.COMPLETED ||
+              tempCurrentSwapStatus.status === SwapStatus.FUNDS_RETURNED ||
+              tempCurrentSwapStatus.status === SwapStatus.REFUNDED_SLIPPAGE
+            ) {
+              clearInterval(swapHistoryInterval);
+            }
+          }, 1000);
+        }
       }
     } catch (error) {
       await goBack();
       Logger.log({ error });
     }
   };
-
-  useEffect(() => {
-    let swapHistoryInterval: string | number | NodeJS.Timeout | undefined;
-    if (!swapHistoryInterval && currentSwapStatus) {
-      swapHistoryInterval = setInterval(async () => {
-        const tempCurrentSwapStatus = await SwapTokenUtils.getSwapStatus(
-          currentSwapId!
-        );
-        setCurrentSwapStatus(tempCurrentSwapStatus);
-        if (
-          tempCurrentSwapStatus.status === SwapStatus.CANCELED_DUE_TO_ERROR ||
-          tempCurrentSwapStatus.status === SwapStatus.COMPLETED ||
-          tempCurrentSwapStatus.status === SwapStatus.FUNDS_RETURNED ||
-          tempCurrentSwapStatus.status === SwapStatus.REFUNDED_SLIPPAGE
-        ) {
-          clearInterval(swapHistoryInterval);
-        }
-      }, 1000);
-    }
-    return () => {
-      clearInterval(swapHistoryInterval);
-    };
-  }, [currentSwapStatus]);
 
   const getFormParams = () => {
     return {

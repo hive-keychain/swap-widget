@@ -4,8 +4,9 @@ import { GlobalProperties } from "@interfaces/global-properties.interface";
 
 const withCommas = (nb: string, decimals = 3, removeTrailingZeros = false) => {
   const currency = nb.split(" ")[1];
-
   const value = parseFloat(nb).toFixed(decimals);
+  if (value === "NaN") return "...";
+
   var parts = value.split(".");
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   let finalNumber = parts.join(".");

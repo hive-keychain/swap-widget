@@ -14,6 +14,7 @@ const Config = {
     autoRefreshHistoryPeriodSec: +(process.env.DEV_SWAP_AUTO_REFRESH ?? 10),
     swapWidget: {
       maxPartnerFeePercentage: 1,
+      autoRefreshPeriodSec: 3,
     },
     baseURL:
       process.env.KEYCHAIN_SWAP_API_DEV === "true"

@@ -61,7 +61,7 @@ const TokenSwaps = ({
   const [loadingEstimate, setLoadingEstimate] = useState(false);
   const [slippage, setSlippage] = useState(5);
   const [amount, setAmount] = useState<string>("");
-
+  const [updatingSwapStatus, setUpdatingSwapStatus] = useState(false);
   const [startToken, setStartToken] = useState<OptionItem>();
   const [endToken, setEndToken] = useState<OptionItem>();
   const [startTokenListOptions, setStartTokenListOptions] = useState<
@@ -75,13 +75,16 @@ const TokenSwaps = ({
   const [autoRefreshCountdown, setAutoRefreshCountdown] = useState<
     number | null
   >(null);
+  const [
+    autoRefreshConfirmationCountdown,
+    setAutoRefreshConfirmationCountdown,
+  ] = useState<number | null>(null);
   const [isAdvancedParametersOpen, setIsAdvancedParametersOpen] =
     useState(false);
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
   const [currentSwapId, setCurrentSwapId] = useState<string>();
   const [partnerUsername, setPartnerUsername] = useState<string>();
   const [partnerFee, setPartnerFee] = useState<number>();
-  let swapHistoryInterval: string | number | NodeJS.Timeout | undefined;
 
   const { t } = useTranslation();
 
@@ -104,7 +107,6 @@ const TokenSwaps = ({
     init();
     return () => {
       throttledRefresh.cancel();
-      if (swapHistoryInterval) clearInterval(swapHistoryInterval);
     };
   }, []);
 
@@ -202,6 +204,40 @@ const TokenSwaps = ({
       clearTimeout(a);
     };
   }, [autoRefreshCountdown]);
+
+  useEffect(() => {
+    if (autoRefreshConfirmationCountdown === null) {
+      return;
+    }
+
+    if (autoRefreshConfirmationCountdown === 0) {
+      setUpdatingSwapStatus(true);
+      if (currentSwapId) updateSwapStatus(currentSwapId);
+      setAutoRefreshConfirmationCountdown(
+        Config.swaps.swapWidget.autoRefreshPeriodSec
+      );
+      return;
+    }
+
+    const a = setTimeout(() => {
+      setAutoRefreshConfirmationCountdown(
+        autoRefreshConfirmationCountdown! - 1
+      );
+    }, 1000);
+
+    if (
+      currentSwapStatus?.status === SwapStatus.CANCELED_DUE_TO_ERROR ||
+      currentSwapStatus?.status === SwapStatus.COMPLETED ||
+      currentSwapStatus?.status === SwapStatus.FUNDS_RETURNED ||
+      currentSwapStatus?.status === SwapStatus.REFUNDED_SLIPPAGE
+    ) {
+      clearTimeout(a);
+    }
+
+    return () => {
+      clearTimeout(a);
+    };
+  }, [autoRefreshConfirmationCountdown]);
 
   const initTokenSelectOptions = async () => {
     const [startList, allTokens] = await Promise.all([
@@ -327,6 +363,14 @@ const TokenSwaps = ({
     setWaitingForKeychainResponse(false);
   };
 
+  const updateSwapStatus = async (swapID: string) => {
+    const tempCurrentSwapStatus = await SwapTokenUtils.getSwapStatus(swapID);
+    setTimeout(() => {
+      setUpdatingSwapStatus(false);
+    }, 1000);
+    setCurrentSwapStatus(tempCurrentSwapStatus);
+  };
+
   const processSwap = async () => {
     if (!estimate) {
       setMessage({
@@ -421,21 +465,9 @@ const TokenSwaps = ({
         );
         if (tempSwapStatus) {
           setCurrentSwapStatus(tempSwapStatus);
-          swapHistoryInterval = setInterval(async () => {
-            const tempCurrentSwapStatus = await SwapTokenUtils.getSwapStatus(
-              swapMessage.result.swap_id
-            );
-            setCurrentSwapStatus(tempCurrentSwapStatus);
-            if (
-              tempCurrentSwapStatus.status ===
-                SwapStatus.CANCELED_DUE_TO_ERROR ||
-              tempCurrentSwapStatus.status === SwapStatus.COMPLETED ||
-              tempCurrentSwapStatus.status === SwapStatus.FUNDS_RETURNED ||
-              tempCurrentSwapStatus.status === SwapStatus.REFUNDED_SLIPPAGE
-            ) {
-              clearInterval(swapHistoryInterval);
-            }
-          }, 1000);
+          setAutoRefreshConfirmationCountdown(
+            Config.swaps.swapWidget.autoRefreshPeriodSec
+          );
         }
       }
     } catch (error) {
@@ -697,13 +729,39 @@ const TokenSwaps = ({
           )}
           {currentSwapStatus && (
             <div className="swap-status-container">
-              <div className="caption swap-status">
-                {t("popup_html_label_status.message")}:{" "}
-                {SwapTokenUtils.getStatusMessage(
-                  currentSwapStatus.status,
-                  true,
-                  t
-                )}
+              <div className="top-container">
+                <div className="row-container">
+                  <div className="caption swap-status">
+                    {t("popup_html_label_status.message")}:{" "}
+                    {SwapTokenUtils.getStatusMessage(
+                      currentSwapStatus.status,
+                      true,
+                      t
+                    )}
+                  </div>
+                  {currentSwapStatus.status !== SwapStatus.COMPLETED &&
+                    currentSwapStatus.status !==
+                      SwapStatus.CANCELED_DUE_TO_ERROR && (
+                      <SVGIcon
+                        icon={SVGIcons.SWAPS_ESTIMATE_REFRESH}
+                        onClick={() => updateSwapStatus(currentSwapStatus.id)}
+                        className={updatingSwapStatus ? "rotate" : ""}
+                      />
+                    )}
+                </div>
+                <div className="countdown">
+                  {!!autoRefreshConfirmationCountdown &&
+                    currentSwapStatus.status !== SwapStatus.COMPLETED &&
+                    currentSwapStatus.status !==
+                      SwapStatus.CANCELED_DUE_TO_ERROR && (
+                      <span>
+                        {t("swap_autorefresh.message", {
+                          autoRefreshCountdown:
+                            autoRefreshConfirmationCountdown,
+                        })}
+                      </span>
+                    )}
+                </div>
               </div>
               <TokenSwapsHistoryItemComponent
                 setMessage={(value) => setMessage(value)}

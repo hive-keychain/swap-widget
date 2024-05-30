@@ -3472,7 +3472,7 @@
     "description": "Widget swaps : processing"
   },
   "html_popup_swaps_documentation_message": {
-    "message": "Please check our <a target='__blank' href='https://play.hive-keychain.com/#/swap-widget/'>playground</a> to learn how to use the widget. Swap Widget Playground",
+    "message": "Please check our <a target='__blank' href='https://play.hive-keychain.com/#/swap-widget/'>playground</a> to learn how to use the widget.",
     "description": "swap widget: wrong partner username param"
   },
   "html_popup_swaps_final_price": {
@@ -3708,19 +3708,15 @@
     "description": "Caption"
   },
   "swap_widget_missing_username_param": {
-    "message": "Username is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
-    "description": "Swap widget error message"
-  },
-  "swap_widget_missing_partnerUsername_param": {
-    "message": "Partner Username is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
+    "message": "Username param is missing in this request.",
     "description": "Swap widget error message"
   },
   "swap_widget_missing_partnerFee_param": {
-    "message": "Partner Fee is a missing param in this request. Please contact development support of the website using the Keychain Swap Widget!",
+    "message": "Partner Fee param is missing in this request.",
     "description": "Swap widget error message"
   },
   "swap_widget_partnerFee_error_out_limits": {
-    "message": "Partner Fee must be between 0% and {{maxPartnerFeePercentage}}%. Please contact development support of the website using the Keychain Swap Widget!",
+    "message": "Partner Fee must be between 0% and {{maxPartnerFeePercentage}}%.",
     "description": "Swap widget error message"
   },
   "swap_no_token": {

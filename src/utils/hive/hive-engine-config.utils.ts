@@ -3,12 +3,11 @@ import {
   DefaultHiveEngineRpcs,
   HiveEngineConfig,
 } from "@interfaces/hive-engine-rpc.interface";
-// import { LocalStorageKeyEnum } from '@reference-data/local-storage-key.enum';
-// import LocalStorageUtils from 'src/utils/localStorage.utils';
+import Config from "src/config";
 
-let rpc = "https://api.hive-engine.com/rpc";
+let rpc = Config.hiveEngine.rpc;
 
-let accountHistoryApi = "https://history.hive-engine.com";
+let accountHistoryApi = Config.hiveEngine.accountHistoryApi;
 
 const getApi = () => {
   return rpc;

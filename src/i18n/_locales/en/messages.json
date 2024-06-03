@@ -2514,7 +2514,7 @@
     "description": "Error while retrieving witness ranking, hivesql not down"
   },
   "popup_html_error_retrieving_tokens_market": {
-    "message": "An error occured while retrieving the tokens market from HIVE. Please try again later.",
+    "message": "An error occured while retrieving the Hive tokens market. Please try again later.",
     "description": "Error while retrieving witness ranking, hivesql not down"
   },
   "popup_html_error_retrieving_currency_prices": {

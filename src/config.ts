@@ -4,7 +4,7 @@ const Config = {
   hiveEngine: {
     mainnet: "ssc-mainnet-hive",
     accountHistoryApi: "https://history.hive-engine.com/",
-    rpc: "https://api.hive-engine.com/rpc",
+    rpc: "https://engine.rishipanthee.com",
   } as HiveEngineConfig,
   rpc: {
     DEFAULT: { uri: "https://api.hive.blog", testnet: false },

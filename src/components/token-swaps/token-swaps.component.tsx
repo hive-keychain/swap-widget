@@ -301,7 +301,12 @@ const TokenSwaps = ({
         const fee =
           (Number(result[result.length - 1].estimate) * swapConfig.fee.amount) /
           100;
-        const finalValue = Number(value - fee).toFixed(precision);
+        const additionalPartnerFee = partnerFee
+          ? (Number(result[result.length - 1].estimate) * partnerFee) / 100
+          : 0;
+        const finalValue = Number(value - fee - additionalPartnerFee).toFixed(
+          precision
+        );
         setEstimate(result);
         setEstimateValue(finalValue);
       } else {

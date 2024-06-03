@@ -2,9 +2,12 @@
   display: flex;
   flex-direction: column;
   row-gap: 12px;
+  flex: 1;
+  width: 100%;
   @include small-card-no-padding();
   color: var(--main-font-color);
   margin: 0px;
+  overflow: scroll;
 
   .expand-panel {
     &.opened {
@@ -39,7 +42,6 @@
       }
     }
     .swap-details {
-      flex: 1;
       display: flex;
       align-items: center;
       column-gap: 8px;
@@ -72,7 +74,8 @@
     display: flex;
     flex-direction: column;
     row-gap: 12px;
-    padding: 16px;
+    padding-left: 32px;
+    margin-top: 8px;
     .id {
       cursor: pointer;
       font-style: italic;

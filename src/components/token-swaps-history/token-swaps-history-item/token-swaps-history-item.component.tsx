@@ -169,7 +169,7 @@ const TokenSwapsHistoryItem = ({ swap, setMessage }: Props) => {
             <div className="step">
               <div className="step-number">ID</div>
               <div className="id" onClick={() => copyIdToCliplboard(swap.id)}>
-                {getShortenedId(swap.id)}
+                {swap.id}
               </div>
             </div>
           </div>

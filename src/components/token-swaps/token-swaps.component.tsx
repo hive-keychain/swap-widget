@@ -423,24 +423,24 @@ const TokenSwaps = ({
       });
       return;
     }
-    let estimateId: string;
-    try {
-      estimateId = await SwapTokenUtils.saveEstimate(
-        estimate!,
-        slippage,
-        startToken?.value.symbol,
-        endToken?.value.symbol,
-        parseFloat(amount),
-        activeAccount.name!
-      );
-    } catch (err: any) {
-      setMessage({
-        key: err.message,
-        type: MessageType.ERROR,
-        skipTranslation: true,
-      });
-      return;
-    }
+    // let estimateId: string;
+    // try {
+    //   estimateId = await SwapTokenUtils.saveEstimate(
+    //     estimate!,
+    //     slippage,
+    //     startToken?.value.symbol,
+    //     endToken?.value.symbol,
+    //     parseFloat(amount),
+    //     activeAccount.name!
+    //   );
+    // } catch (err: any) {
+    //   setMessage({
+    //     key: err.message,
+    //     type: MessageType.ERROR,
+    //     skipTranslation: true,
+    //   });
+    //   return;
+    // }
 
     setStep(2);
     const keychain = new KeychainSDK(window);

@@ -180,10 +180,6 @@ const TokenSwaps = ({
         ) {
           setPartnerUsername(formParams.partnerUsername);
           setPartnerFee(Number(formParams.partnerFee));
-
-          setTimeout(() => {
-            console.log(partnerFee, Number(formParams.partnerFee));
-          }, 3000);
         }
       }
     }
@@ -343,7 +339,6 @@ const TokenSwaps = ({
         const fee =
           (Number(result[result.length - 1].estimate) * swapConfig.fee.amount) /
           100;
-        console.log(partnerFee, "p");
         const additionalPartnerFee = formParams.partnerFee
           ? (Number(result[result.length - 1].estimate) *
               Number(formParams.partnerFee)) /

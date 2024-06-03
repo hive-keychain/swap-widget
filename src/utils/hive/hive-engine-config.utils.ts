@@ -1,9 +1,9 @@
+import Config from "@configFile";
 import {
   DefaultAccountHistoryApis,
   DefaultHiveEngineRpcs,
   HiveEngineConfig,
 } from "@interfaces/hive-engine-rpc.interface";
-import Config from "src/config";
 
 let rpc = Config.hiveEngine.rpc;
 

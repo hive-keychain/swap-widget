@@ -100,9 +100,11 @@ const TokenSwaps = ({
       { leading: false } as ThrottleSettings
     );
   }, []);
+
   useEffect(() => {
     throttledRefresh(amount, endToken, startToken, swapConfig);
   }, [amount, endToken, startToken, swapConfig]);
+
   useEffect(() => {
     init();
     return () => {
@@ -185,13 +187,24 @@ const TokenSwaps = ({
     }
   }, [startTokenListOptions, endTokenListOptions]);
 
+  const clearAutoEstimate = () => {
+    setAutoRefreshCountdown(null);
+    setEstimate(undefined);
+    setEstimateValue(undefined);
+  };
+
   useEffect(() => {
     if (autoRefreshCountdown === null) {
       return;
     }
 
     if (autoRefreshCountdown === 0 && startToken && endToken) {
-      calculateEstimate(amount, startToken, endToken, swapConfig);
+      if (parseFloat(amount) > 0) {
+        calculateEstimate(amount, startToken, endToken, swapConfig);
+      } else {
+        clearAutoEstimate();
+        return;
+      }
       setAutoRefreshCountdown(Config.swaps.autoRefreshPeriodSec);
       return;
     }
@@ -407,7 +420,7 @@ const TokenSwaps = ({
       });
       return;
     }
-    if (!amount || amount.length === 0) {
+    if (!amount || amount.trim().length === 0) {
       setMessage({
         key: "popup_html_need_positive_amount.message",
         type: MessageType.ERROR,
@@ -423,6 +436,7 @@ const TokenSwaps = ({
       });
       return;
     }
+    setAutoRefreshCountdown(null);
     // let estimateId: string;
     // try {
     //   estimateId = await SwapTokenUtils.saveEstimate(
@@ -464,6 +478,7 @@ const TokenSwaps = ({
         partnerUsername: getFormParams().partnerUsername ?? undefined,
         partnerFee: getFormParams().partnerFee ?? undefined,
       } as Swap);
+      console.log({ swapMessage }); //TODO remove line
       if (swapMessage.success) {
         SwapTokenUtils.saveLastUsed(startToken?.value, endToken?.value);
         setCurrentSwapId(swapMessage.result.swap_id);
@@ -544,6 +559,16 @@ const TokenSwaps = ({
     setCurrentSwapId(undefined);
     await goBack();
     reloadApp();
+  };
+
+  const handleRightIconClick = () => {
+    if (!estimate) return;
+    if (parseFloat(amount) === 0 || amount.trim().length === 0) {
+      clearAutoEstimate();
+      return;
+    }
+    calculateEstimate(amount, startToken!, endToken!, swapConfig!);
+    setAutoRefreshCountdown(Config.swaps.autoRefreshPeriodSec);
   };
 
   const renderPage = () => {
@@ -639,18 +664,7 @@ const TokenSwaps = ({
                               loadingEstimate ? "rotate" : ""
                             }
                             rightActionIcon={SVGIcons.SWAPS_ESTIMATE_REFRESH}
-                            rightActionClicked={() => {
-                              if (!estimate) return;
-                              calculateEstimate(
-                                amount,
-                                startToken!,
-                                endToken!,
-                                swapConfig!
-                              );
-                              setAutoRefreshCountdown(
-                                Config.swaps.autoRefreshPeriodSec
-                              );
-                            }}
+                            rightActionClicked={handleRightIconClick}
                           />
                         </CustomTooltip>
                       </div>

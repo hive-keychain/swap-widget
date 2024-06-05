@@ -3463,6 +3463,10 @@
     "message": "Slippage",
     "description": "Token swaps : Slippage"
   },
+  "html_popup_swaps_partnerUsername": {
+    "message": "Partner Username",
+    "description": "Token swaps : partnerUsername"
+  },
   "html_popup_swaps_process_swap": {
     "message": "Swap",
     "description": "Token swaps : process"

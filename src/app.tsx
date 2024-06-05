@@ -49,7 +49,7 @@ export const App = () => {
     setMessage({
       type: MessageType.ERROR,
       key: key_error,
-      params,
+      params: params,
     });
     Logger.log(loggerTitle, (e as any).toString());
     setMissingParams(true);

@@ -74,13 +74,20 @@
 
   .form-container {
     row-gap: 16px;
+    .widget-title {
+      color: var(--main-font-color);
+      @include poppins500(18px);
+      text-align: center;
+      margin-bottom: 4px;
+    }
     .form-fields {
       flex: 1;
       display: flex;
       flex-direction: column;
       row-gap: 6px;
       .start-token,
-      .end-token {
+      .end-token,
+      .partner-fee-amount-container {
         display: flex;
         flex-direction: column;
         input::-webkit-input-placeholder {
@@ -107,6 +114,10 @@
         }
       }
 
+      .partner-section {
+        row-gap: 12px;
+      }
+
       .swap-icon {
         align-self: center;
       }
@@ -119,7 +130,8 @@
         }
       }
 
-      .advanced-parameters {
+      .advanced-parameters,
+      .partner-parameters {
         margin-top: 5px;
         color: var(--main-font-color);
         .title-panel {
@@ -131,11 +143,13 @@
           align-items: center;
           @include poppins500(16px);
 
-          .advanced-parameters-toggle {
+          .advanced-parameters-toggle,
+          .partner-parameters-toggle {
             @include open-close-rotate();
           }
         }
-        .advanced-parameters-container {
+        .advanced-parameters-container,
+        .partner-parameters-container {
           padding-top: 8px;
           padding-bottom: 8px;
         }

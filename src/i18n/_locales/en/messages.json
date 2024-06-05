@@ -3467,6 +3467,14 @@
     "message": "Partner Username",
     "description": "Token swaps : partnerUsername"
   },
+  "html_popup_swaps_partnerFee": {
+    "message": "Partner Fee",
+    "description": "Token swaps : partnerFee"
+  },
+  "html_popup_swaps_partnerFeeAmount": {
+    "message": "Partner Fee Amount",
+    "description": "Token swaps : partnerFeeAmount"
+  },
   "html_popup_swaps_process_swap": {
     "message": "Swap",
     "description": "Token swaps : process"
@@ -3683,6 +3691,10 @@
     "message": "Advanced parameters",
     "description": "Swap advanced parameters"
   },
+  "swap_partner_parameters": {
+    "message": "Partner parameters",
+    "description": "Swap partner parameters"
+  },
   "swap_no_history": {
     "message": "Your swap history is empty",
     "description": "History swap empty"
@@ -3713,6 +3725,10 @@
   },
   "swap_widget_missing_username_param": {
     "message": "Username param is missing in this request.",
+    "description": "Swap widget error message"
+  },
+  "swap_widget_missing_partnerUsername_param": {
+    "message": "Partner Username param is missing in this request.",
     "description": "Swap widget error message"
   },
   "swap_widget_missing_partnerFee_param": {

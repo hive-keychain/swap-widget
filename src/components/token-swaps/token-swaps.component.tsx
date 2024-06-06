@@ -81,7 +81,6 @@ const TokenSwaps = ({
   ] = useState<number | null>(null);
   const [isAdvancedParametersOpen, setIsAdvancedParametersOpen] =
     useState(false);
-  const [isPartnerParametersOpen, setIsPartnerParametersOpen] = useState(false);
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
   const [currentSwapId, setCurrentSwapId] = useState<string>();
   const [partnerUsername, setPartnerUsername] = useState<string>();
@@ -721,71 +720,11 @@ const TokenSwaps = ({
                       )}
                     </div>
                     {partnerFee && partnerUsername && (
-                      <div className="partner-parameters">
-                        <div
-                          className="title-panel"
-                          onClick={() =>
-                            setIsPartnerParametersOpen(!isPartnerParametersOpen)
-                          }
-                        >
-                          <div className="title">
-                            {t("swap_partner_parameters.message")}
-                          </div>
-                          <SVGIcon
-                            icon={SVGIcons.GLOBAL_ARROW}
-                            onClick={() =>
-                              setIsPartnerParametersOpen(
-                                !isPartnerParametersOpen
-                              )
-                            }
-                            className={`partner-parameters-toggle ${
-                              isPartnerParametersOpen ? "open" : "closed"
-                            }`}
-                          />
-                        </div>
-                        {isPartnerParametersOpen && (
-                          <div className="partner-parameters-container">
-                            <InputComponent
-                              disabled
-                              type={InputType.TEXT}
-                              logo={SVGIcons.INPUT_AT}
-                              value={partnerUsername}
-                              onChange={setPartnerUsername}
-                              label="html_popup_swaps_partnerUsername.message"
-                              placeholder="html_popup_swaps_partnerUsername.message"
-                            />
-                            <InputComponent
-                              disabled
-                              type={InputType.NUMBER}
-                              min={5}
-                              step={1}
-                              value={partnerFee}
-                              onChange={setPartnerFee}
-                              label="html_popup_swaps_partnerFee.message"
-                              placeholder="html_popup_swaps_partnerFee.message"
-                            />
-                            <div className="partner-fee-amount-container">
-                              <div className="inputs">
-                                <InputComponent
-                                  disabled
-                                  type={InputType.NUMBER}
-                                  value={partnerFeeAmount}
-                                  onChange={setPartnerFeeAmount}
-                                  label="html_popup_swaps_partnerFeeAmount.message"
-                                  placeholder="html_popup_swaps_partnerFeeAmount.message"
-                                />
-                                {partnerFeeAmount > 0 && startToken && (
-                                  <InputComponent
-                                    disabled
-                                    type={InputType.TEXT}
-                                    value={startToken.value.symbol}
-                                    onChange={() => {}}
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                      <div className="caption swap-partner-fee">
+                        {t("swap_partner_fee_information.message", {
+                          fee: partnerFee,
+                          partnerUsername,
+                        })}
                       </div>
                     )}
                   </div>

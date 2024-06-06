@@ -51,6 +51,11 @@
     &.id {
       cursor: pointer;
     }
+    &.swap-partner-fee {
+      padding: 0px !important;
+      font-weight: 500 !important;
+      font-size: 16px !important;
+    }
   }
 
   .top-row {

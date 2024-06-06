@@ -3695,6 +3695,10 @@
     "message": "Partner parameters",
     "description": "Swap partner parameters"
   },
+  "swap_partner_fee_information": {
+    "message": "Fee: {{fee}}% to @{{partnerUsername}}",
+    "description": "Swap partner parameters"
+  },
   "swap_no_history": {
     "message": "Your swap history is empty",
     "description": "History swap empty"

@@ -719,14 +719,14 @@ const TokenSwaps = ({
                         </div>
                       )}
                     </div>
-                    {partnerFee && partnerUsername && (
+                    {/* {partnerFee && partnerUsername && (
                       <div className="caption swap-partner-fee">
                         {t("swap_partner_fee_information.message", {
                           fee: partnerFee,
                           partnerUsername,
                         })}
                       </div>
-                    )}
+                    )} */}
                   </div>
                   <ButtonComponent
                     type={ButtonType.IMPORTANT}

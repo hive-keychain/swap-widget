@@ -17,7 +17,7 @@ module.exports = {
     static: "./dist",
     headers: {
       "Content-Security-Policy":
-        "frame-ancestors 'self' localhost:* http://* https://* chrome-extension://*;default-src 'self' 'unsafe-inline' http://* https://* chrome-extension://*; frame-src 'self' 'unsafe-inline' http://* https://* chrome-extension://*; script-src 'self' 'unsafe-inline' http://* https://* chrome-extension://*;",
+        "frame-ancestors 'self' localhost:* http://* https://* chrome-extension://* moz-extension://*;default-src 'self' 'unsafe-inline' http://* https://* chrome-extension://* moz-extension://*; frame-src 'self' 'unsafe-inline' http://* https://* chrome-extension://* moz-extension://*; script-src 'self' 'unsafe-inline' http://* https://* chrome-extension://*; moz-extension://*",
     },
   },
   module: {

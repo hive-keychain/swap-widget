@@ -13,6 +13,8 @@ import { DEFAULT_FORM_PARAMS } from "@reference-data/swap-widget";
 import { Theme, useThemeContext } from "@theme-context";
 import AccountUtils from "@utils/hive/account.utils";
 import CurrencyPricesUtils from "@utils/hive/currency-prices.utils";
+import { HiveEngineRpcUtils } from "@utils/hive/hive-engine-rpc.utils";
+import { HiveTxUtils } from "@utils/hive/hive-tx.utils";
 import TokensUtils from "@utils/hive/tokens.utils";
 import Logger from "@utils/logger.utils";
 import { SwapTokenUtils } from "@utils/swap-token.utils";
@@ -144,6 +146,12 @@ export const App = () => {
               Config.swaps.swapWidget.maxPartnerFeePercentage,
           }
         );
+      }
+      if (tempFormParams.hiveEngineRpc) {
+        HiveEngineRpcUtils.setRpc(tempFormParams.hiveEngineRpc);
+      }
+      if (tempFormParams.rpc) {
+        HiveTxUtils.setRpc(tempFormParams.rpc);
       }
       //end params validations
     } else if (lastUsed && lastUsed.from && lastUsed.from.account) {
